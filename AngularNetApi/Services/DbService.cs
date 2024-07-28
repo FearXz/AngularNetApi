@@ -123,6 +123,8 @@ namespace AngularNetApi.Services
             parameters[nome] = parametroOutput;
         }
 
+        // Crea un DataTable da una lista di oggetti
+
         public DataTable CreateDataTable<T>(IEnumerable<T> data)
         {
             DataTable table = new DataTable();
