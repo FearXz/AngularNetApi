@@ -32,7 +32,6 @@ namespace AngularNetApi.Controllers
                     return Unauthorized();
 
                 user.Token = token;
-
                 return Ok(user);
             }
             catch (Exception ex)

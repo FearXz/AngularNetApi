@@ -1,6 +1,7 @@
 ﻿using AngularNetApi.Models;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using System.Reflection;
 
 namespace AngularNetApi.Services
 {
@@ -16,34 +17,6 @@ namespace AngularNetApi.Services
             using SqlConnection connection = CreateConnection(connectionString);
             using SqlCommand command = CreateCommand(connection, storedProcedureName, parameters);
             return ExecuteCommand(connection, command);
-        }
-
-        // Aggiunge un parametro di input alla lista dei parametri
-
-        public void AddInputParameter(
-            Dictionary<string, object> parameters,
-            string nome,
-            object valore
-        )
-        {
-            parameters[nome] = valore ?? DBNull.Value;
-        }
-
-        // Aggiunge un parametro di output alla lista dei parametri
-
-        public void AddOutputParameter(
-            Dictionary<string, object> parameters,
-            string nome,
-            SqlDbType tipo,
-            object valore = null
-        )
-        {
-            var parametroOutput = new SqlParameter(nome, tipo)
-            {
-                Direction = ParameterDirection.Output,
-                Value = valore ?? DBNull.Value
-            };
-            parameters[nome] = parametroOutput;
         }
 
         // Crea una connessione al database
@@ -120,6 +93,66 @@ namespace AngularNetApi.Services
                 }
             }
             return response;
+        }
+
+        // Aggiunge un parametro di input alla lista dei parametri
+
+        public void AddInputParameter(
+            Dictionary<string, object> parameters,
+            string nome,
+            object valore
+        )
+        {
+            parameters[nome] = valore ?? DBNull.Value;
+        }
+
+        // Aggiunge un parametro di output alla lista dei parametri
+
+        public void AddOutputParameter(
+            Dictionary<string, object> parameters,
+            string nome,
+            SqlDbType tipo,
+            object valore = null
+        )
+        {
+            var parametroOutput = new SqlParameter(nome, tipo)
+            {
+                Direction = ParameterDirection.Output,
+                Value = valore ?? DBNull.Value
+            };
+            parameters[nome] = parametroOutput;
+        }
+
+        public DataTable CreateDataTable<T>(IEnumerable<T> data)
+        {
+            DataTable table = new DataTable();
+
+            // Ottieni le proprietà pubbliche di T
+            PropertyInfo[] properties = typeof(T).GetProperties(
+                BindingFlags.Public | BindingFlags.Instance
+            );
+
+            // Crea colonne nel DataTable corrispondenti alle proprietà
+            foreach (var prop in properties)
+            {
+                table.Columns.Add(
+                    prop.Name,
+                    Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType
+                );
+            }
+
+            // Popola il DataTable con i dati della lista
+            foreach (var item in data)
+            {
+                var values = new object[properties.Length];
+                for (int i = 0; i < properties.Length; i++)
+                {
+                    values[i] = properties[i].GetValue(item) ?? DBNull.Value;
+                }
+                table.Rows.Add(values);
+            }
+
+            return table;
         }
     }
 }
