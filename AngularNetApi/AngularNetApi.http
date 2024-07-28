@@ -1,0 +1,6 @@
+@AngularNetApi_HostAddress = http://localhost:5034
+
+GET {{AngularNetApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
