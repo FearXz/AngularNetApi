@@ -1,4 +1,5 @@
 ﻿using AngularNetApi.Models;
+using System.Data;
 
 namespace AngularNetApi.Services.DbServices
 {
@@ -24,23 +25,21 @@ namespace AngularNetApi.Services.DbServices
                 "dbo.GetUserLogin",
                 parameters
             );
-            using (response.DataReader)
+            if (response.DataTable.Rows.Count > 0)
             {
-                if (response.DataReader.Read())
+                DataRow row = response.DataTable.Rows[0];
+                return new LoginResponse
                 {
-                    return new LoginResponse
-                    {
-                        IdUtente = response.DataReader.GetGuid(0),
-                        Nome = response.DataReader.GetString(1),
-                        Cognome = response.DataReader.GetString(2),
-                        Email = response.DataReader.GetString(3),
-                        Citta = response.DataReader.GetString(4),
-                        Cellulare = response.DataReader.GetString(5),
-                        Indirizzo = response.DataReader.GetString(6),
-                        CAP = response.DataReader.GetString(7),
-                        Role = response.DataReader.GetString(8)
-                    };
-                }
+                    IdUtente = (Guid)row["IdUtente"],
+                    Nome = (string)row["Nome"],
+                    Cognome = (string)row["Cognome"],
+                    Email = (string)row["Email"],
+                    Citta = (string)row["Citta"],
+                    Cellulare = (string)row["Cellulare"],
+                    Indirizzo = (string)row["Indirizzo"],
+                    CAP = (string)row["CAP"],
+                    Role = (string)row["Role"]
+                };
             }
             return null;
         }

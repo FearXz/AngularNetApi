@@ -1,10 +1,16 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using System.Data;
 
 namespace AngularNetApi.Models
 {
     public class StoredProcedureResult
     {
-        public SqlDataReader DataReader { get; set; }
+        public DataTable DataTable { get; set; }
         public Dictionary<string, object> OutputParameters { get; set; }
+
+        public StoredProcedureResult()
+        {
+            DataTable = new DataTable();
+            OutputParameters = new Dictionary<string, object>();
+        }
     }
 }

@@ -26,7 +26,6 @@ namespace AngularNetApi.Controllers
                     return BadRequest();
 
                 LoginResponse user = _db.userSvc.GetUserByLoginPost(loginPost);
-
                 string token = _authSvc.GenerateToken(user);
 
                 if (user == null || token == null)

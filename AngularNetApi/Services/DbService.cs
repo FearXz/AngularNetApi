@@ -6,16 +6,19 @@ namespace AngularNetApi.Services
 {
     public class DbService
     {
+        // Esegue una stored procedure e restituisce il response
         public StoredProcedureResult ExecuteStoredProcedure(
             string connectionString,
             string storedProcedureName,
             Dictionary<string, object> parameters
         )
         {
-            SqlConnection connection = CreateConnection(connectionString);
-            SqlCommand command = CreateCommand(connection, storedProcedureName, parameters);
+            using SqlConnection connection = CreateConnection(connectionString);
+            using SqlCommand command = CreateCommand(connection, storedProcedureName, parameters);
             return ExecuteCommand(connection, command);
         }
+
+        // Aggiunge un parametro di input alla lista dei parametri
 
         public void AddInputParameter(
             Dictionary<string, object> parameters,
@@ -25,6 +28,8 @@ namespace AngularNetApi.Services
         {
             parameters[nome] = valore ?? DBNull.Value;
         }
+
+        // Aggiunge un parametro di output alla lista dei parametri
 
         public void AddOutputParameter(
             Dictionary<string, object> parameters,
@@ -40,6 +45,8 @@ namespace AngularNetApi.Services
             };
             parameters[nome] = parametroOutput;
         }
+
+        // Crea una connessione al database
 
         private SqlConnection CreateConnection(string connectionString)
         {
@@ -61,6 +68,8 @@ namespace AngularNetApi.Services
 
             return command;
         }
+
+        // Aggiunge il dizionario dei parametri al command
 
         private void AddParameters(SqlCommand command, Dictionary<string, object> parameters)
         {
@@ -86,6 +95,8 @@ namespace AngularNetApi.Services
             }
         }
 
+        // Esegue il command e restituisce il response
+
         private StoredProcedureResult ExecuteCommand(SqlConnection connection, SqlCommand command)
         {
             connection.Open();
@@ -93,7 +104,10 @@ namespace AngularNetApi.Services
             {
                 OutputParameters = new Dictionary<string, object>()
             };
-            response.DataReader = command.ExecuteReader(CommandBehavior.CloseConnection);
+            using (SqlDataReader reader = command.ExecuteReader())
+            {
+                response.DataTable.Load(reader);
+            }
 
             foreach (SqlParameter param in command.Parameters)
             {
