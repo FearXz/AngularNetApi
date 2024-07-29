@@ -1,7 +1,7 @@
-﻿using AngularNetApi.Models;
-using Microsoft.Data.SqlClient;
-using System.Data;
+﻿using System.Data;
 using System.Reflection;
+using AngularNetApi.Models;
+using Microsoft.Data.SqlClient;
 
 namespace AngularNetApi.Services
 {
@@ -61,10 +61,6 @@ namespace AngularNetApi.Services
                     };
                     command.Parameters.Add(structuredParam);
                 }
-                else
-                {
-                    command.Parameters.AddWithValue(param.Key, param.Value ?? DBNull.Value);
-                }
             }
         }
 
@@ -103,7 +99,11 @@ namespace AngularNetApi.Services
             object valore
         )
         {
-            parameters[nome] = valore ?? DBNull.Value;
+            var inputParameter = new SqlParameter(nome, valore ?? DBNull.Value)
+            {
+                Direction = ParameterDirection.Input
+            };
+            parameters[nome] = inputParameter;
         }
 
         // Aggiunge un parametro di output alla lista dei parametri
@@ -115,12 +115,12 @@ namespace AngularNetApi.Services
             object valore = null
         )
         {
-            var parametroOutput = new SqlParameter(nome, tipo)
+            var outputParameter = new SqlParameter(nome, tipo)
             {
                 Direction = ParameterDirection.Output,
                 Value = valore ?? DBNull.Value
             };
-            parameters[nome] = parametroOutput;
+            parameters[nome] = outputParameter;
         }
 
         // Crea un DataTable da una lista di oggetti

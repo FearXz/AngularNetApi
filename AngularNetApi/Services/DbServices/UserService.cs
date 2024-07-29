@@ -1,5 +1,5 @@
-﻿using AngularNetApi.Models;
-using System.Data;
+﻿using System.Data;
+using AngularNetApi.Models;
 
 namespace AngularNetApi.Services.DbServices
 {
