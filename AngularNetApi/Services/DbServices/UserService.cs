@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using AngularNetApi.Models;
+using Microsoft.Data.SqlClient;
 
 namespace AngularNetApi.Services.DbServices
 {
@@ -16,7 +17,7 @@ namespace AngularNetApi.Services.DbServices
 
         public LoginResponse GetUserByLoginPost(LoginPost loginPost)
         {
-            var parameters = new Dictionary<string, object>();
+            var parameters = new List<SqlParameter>();
             _dbService.AddInputParameter(parameters, "@email", loginPost.Email);
             _dbService.AddInputParameter(parameters, "@password", loginPost.Password);
 

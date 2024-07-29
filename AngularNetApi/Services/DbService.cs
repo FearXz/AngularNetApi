@@ -11,7 +11,7 @@ namespace AngularNetApi.Services
         public StoredProcedureResult ExecuteStoredProcedure(
             string connectionString,
             string storedProcedureName,
-            Dictionary<string, object> parameters
+            List<SqlParameter> parameters
         )
         {
             using SqlConnection connection = CreateConnection(connectionString);
@@ -29,7 +29,7 @@ namespace AngularNetApi.Services
         private SqlCommand CreateCommand(
             SqlConnection connection,
             string storedProcedureName,
-            Dictionary<string, object> parameters
+            List<SqlParameter> parameters
         )
         {
             SqlCommand command = new SqlCommand(storedProcedureName, connection)
@@ -44,23 +44,11 @@ namespace AngularNetApi.Services
 
         // Aggiunge il dizionario dei parametri al command
 
-        private void AddParameters(SqlCommand command, Dictionary<string, object> parameters)
+        private void AddParameters(SqlCommand command, List<SqlParameter> parameters)
         {
             foreach (var param in parameters)
             {
-                if (param.Value is SqlParameter sqlParam)
-                {
-                    command.Parameters.Add(sqlParam);
-                }
-                else if (param.Value is DataTable dataTable)
-                {
-                    SqlParameter structuredParam = new SqlParameter(param.Key, SqlDbType.Structured)
-                    {
-                        TypeName = dataTable.TableName,
-                        Value = dataTable
-                    };
-                    command.Parameters.Add(structuredParam);
-                }
+                command.Parameters.Add(param);
             }
         }
 
@@ -93,23 +81,31 @@ namespace AngularNetApi.Services
 
         // Aggiunge un parametro di input alla lista dei parametri
 
-        public void AddInputParameter(
-            Dictionary<string, object> parameters,
-            string nome,
-            object valore
-        )
+        public void AddInputParameter(List<SqlParameter> parameters, string nome, object valore)
         {
-            var inputParameter = new SqlParameter(nome, valore ?? DBNull.Value)
+            if (valore is DataTable dataTable)
             {
-                Direction = ParameterDirection.Input
-            };
-            parameters[nome] = inputParameter;
+                var structuredParameter = new SqlParameter(nome, SqlDbType.Structured)
+                {
+                    TypeName = dataTable.TableName,
+                    Value = dataTable
+                };
+                parameters.Add(structuredParameter);
+            }
+            else
+            {
+                var inputParameter = new SqlParameter(nome, valore ?? DBNull.Value)
+                {
+                    Direction = ParameterDirection.Input
+                };
+                parameters.Add(inputParameter);
+            }
         }
 
         // Aggiunge un parametro di output alla lista dei parametri
 
         public void AddOutputParameter(
-            Dictionary<string, object> parameters,
+            List<SqlParameter> parameters,
             string nome,
             SqlDbType tipo,
             object valore = null
@@ -120,7 +116,7 @@ namespace AngularNetApi.Services
                 Direction = ParameterDirection.Output,
                 Value = valore ?? DBNull.Value
             };
-            parameters[nome] = outputParameter;
+            parameters.Add(outputParameter);
         }
 
         // Crea un DataTable da una lista di oggetti
