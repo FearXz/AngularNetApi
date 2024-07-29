@@ -57,10 +57,8 @@ namespace AngularNetApi.Services
         private StoredProcedureResult ExecuteCommand(SqlConnection connection, SqlCommand command)
         {
             connection.Open();
-            var response = new StoredProcedureResult
-            {
-                OutputParameters = new Dictionary<string, object>()
-            };
+            var response = new StoredProcedureResult();
+
             using (SqlDataReader reader = command.ExecuteReader())
             {
                 response.DataTable.Load(reader);
