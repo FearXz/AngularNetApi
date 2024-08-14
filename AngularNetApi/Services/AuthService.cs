@@ -183,7 +183,7 @@ namespace AngularNetApi.Services
                         MobileNumber = registerRequest.MobileNumber
                     };
 
-                    var addRoleResult = await _userManager.AddToRoleAsync(user, Roles.ADMIN);
+                    var addRoleResult = await _userManager.AddToRoleAsync(user, Roles.USER);
 
                     if (!addRoleResult.Succeeded)
                         throw new Exception("Error adding role to user");
