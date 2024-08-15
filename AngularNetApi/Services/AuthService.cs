@@ -1,7 +1,7 @@
 ﻿using AngularNetApi.Conext;
-using AngularNetApi.DTOs;
+using AngularNetApi.DTOs.AuthDto;
 using AngularNetApi.Entities;
-using AngularNetApi.Factory.Interfaces;
+using AngularNetApi.Factory.ClaimFactory.Interfaces;
 using AngularNetApi.Interfaces;
 using AngularNetApi.Util;
 using AngularNetApiAngularNetApi.Services;
@@ -79,12 +79,7 @@ namespace AngularNetApi.Services
                     token.Name,
                     token.Value
                 );
-                return new LoginResponse
-                {
-                    AccessToken = accessToken,
-                    Duration = TokenExpirationTime * 60 * 60, // converto in secondi
-                    RefreshToken = refreshToken
-                };
+                return new LoginResponse { AccessToken = accessToken, RefreshToken = refreshToken };
             }
             catch (Exception ex)
             {
@@ -147,7 +142,6 @@ namespace AngularNetApi.Services
                 return new RefreshTokenResponse
                 {
                     AccessToken = newAccessToken,
-                    Duration = TokenExpirationTime * 60 * 60, // converto in secondi
                     RefreshToken = newRefreshToken
                 };
             }
@@ -157,7 +151,7 @@ namespace AngularNetApi.Services
             }
         }
 
-        public async Task<UserRegisterResponse> Register(UserRegisterRequest registerRequest)
+        public async Task<UserRegisterResponse> RegisterUser(UserRegisterRequest registerRequest)
         {
             using (var transaction = await _db.Database.BeginTransactionAsync())
             {

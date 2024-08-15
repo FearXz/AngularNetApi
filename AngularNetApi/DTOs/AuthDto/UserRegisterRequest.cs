@@ -1,4 +1,4 @@
-﻿namespace AngularNetApi.DTOs
+﻿namespace AngularNetApi.DTOs.AuthDto
 {
     public class UserRegisterRequest
     {

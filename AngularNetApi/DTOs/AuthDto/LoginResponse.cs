@@ -1,9 +1,8 @@
-﻿namespace AngularNetApi.DTOs
+﻿namespace AngularNetApi.DTOs.AuthDto
 {
-    public class RefreshTokenResponse
+    public class LoginResponse
     {
         public string AccessToken { get; set; }
         public string RefreshToken { get; set; }
-        public int Duration { get; set; }
     }
 }

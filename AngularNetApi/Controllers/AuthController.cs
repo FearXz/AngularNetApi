@@ -1,12 +1,8 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using AngularNetApi.DTOs;
+﻿using AngularNetApi.DTOs.AuthDto;
 using AngularNetApi.Entities;
 using AngularNetApi.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 
 namespace AngularNetApi.Controllers
 {
@@ -74,8 +70,8 @@ namespace AngularNetApi.Controllers
             }
         }
 
-        [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] UserRegisterRequest newUser)
+        [HttpPost("registerUser")]
+        public async Task<IActionResult> RegisterUser([FromBody] UserRegisterRequest newUser)
         {
             if (!ModelState.IsValid)
             {
@@ -84,7 +80,7 @@ namespace AngularNetApi.Controllers
             }
             try
             {
-                UserRegisterResponse result = await _authSvc.Register(newUser);
+                UserRegisterResponse result = await _authSvc.RegisterUser(newUser);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -132,72 +128,6 @@ namespace AngularNetApi.Controllers
             }
 
             return BadRequest(result.Errors);
-        }
-
-        private string GenerateToken(UserCredentials user)
-        {
-            var jwt = _configuration.GetSection("Jwt");
-            var key = Encoding.ASCII.GetBytes(jwt["Key"]);
-
-            var claims = new[]
-            {
-                new Claim("Email", user.Email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // Genera un jti unico
-                new Claim(ClaimTypes.NameIdentifier, user.Id), // Memorizza l'ID utente qui
-                new Claim(ClaimTypes.Name, user.UserName) // Memorizza il nome utente qui
-            };
-
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddHours(1),
-                SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(key),
-                    SecurityAlgorithms.HmacSha256Signature
-                ),
-                Issuer = jwt["Issuer"],
-                Audience = jwt["Audience"]
-            };
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
-        }
-
-        private string GetIdFromToken(string token)
-        {
-            var tokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateAudience = false,
-                ValidateIssuer = false,
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(_configuration["Jwt:Key"])
-                ),
-                ValidateLifetime = false // Non validare la scadenza del token
-            };
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-
-            var principal = tokenHandler.ValidateToken(
-                token,
-                tokenValidationParameters,
-                out SecurityToken securityToken
-            );
-            var jwtSecurityToken = securityToken as JwtSecurityToken;
-
-            if (
-                jwtSecurityToken == null
-                || !jwtSecurityToken.Header.Alg.Equals(
-                    SecurityAlgorithms.HmacSha256,
-                    StringComparison.InvariantCultureIgnoreCase
-                )
-            )
-            {
-                throw new SecurityTokenException("Invalid token");
-            }
-
-            return principal.FindFirstValue(ClaimTypes.NameIdentifier);
         }
     }
 }

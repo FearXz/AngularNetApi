@@ -1,6 +1,6 @@
 ﻿using AngularNetApi.Entities;
 
-namespace AngularNetApi.Factory.Interfaces
+namespace AngularNetApi.Factory.ClaimFactory.Interfaces
 {
     public interface IClaimsFactory
     {

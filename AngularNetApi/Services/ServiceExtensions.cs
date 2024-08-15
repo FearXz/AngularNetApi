@@ -1,5 +1,5 @@
-﻿using AngularNetApi.Factory;
-using AngularNetApi.Factory.Interfaces;
+﻿using AngularNetApi.Factory.ClaimFactory;
+using AngularNetApi.Factory.ClaimFactory.Interfaces;
 using AngularNetApi.Interfaces;
 using AngularNetApiAngularNetApi.Services;
 

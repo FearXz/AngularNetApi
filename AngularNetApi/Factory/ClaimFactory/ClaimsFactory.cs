@@ -1,10 +1,10 @@
 ﻿using AngularNetApi.Entities;
-using AngularNetApi.Factory.Class;
-using AngularNetApi.Factory.Interfaces;
+using AngularNetApi.Factory.ClaimFactory.Class;
+using AngularNetApi.Factory.ClaimFactory.Interfaces;
 using AngularNetApi.Util;
 using AngularNetApiAngularNetApi.Services;
 
-namespace AngularNetApi.Factory
+namespace AngularNetApi.Factory.ClaimFactory
 {
     public class ClaimsFactory : IClaimsFactory
     {
@@ -28,17 +28,11 @@ namespace AngularNetApi.Factory
                 if (UserData == null)
                     throw new Exception("User has no registry");
 
-                return new UserClaims
+                return new BaseClaims
                 {
                     Id = user.Id,
-                    Email = user.Email,
-                    Address = UserData.Address,
-                    City = UserData.City,
-                    Cap = UserData.CAP,
-                    MobileNumber = UserData.MobileNumber,
                     Role = userRole,
-                    Name = UserData.Name,
-                    Surname = UserData.Surname
+                    NameId = UserData.Name,
                 };
             }
             else if (userRole == Roles.COMPANY)
@@ -47,18 +41,11 @@ namespace AngularNetApi.Factory
                 if (CompanyData == null)
                     throw new Exception("Company has no registry");
 
-                return new CompanyClaims
+                return new BaseClaims
                 {
                     Id = user.Id,
-                    Email = user.Email,
-                    Address = CompanyData.Address,
-                    City = CompanyData.City,
-                    Cap = CompanyData.CAP,
-                    MobileNumber = CompanyData.MobileNumber,
                     Role = userRole,
-                    CompanyName = CompanyData.CompanyName,
-                    VatNumber = CompanyData.VATNumber,
-                    TelephoneNumber = CompanyData.TelephoneNumber
+                    NameId = CompanyData.CompanyName,
                 };
             }
             else
