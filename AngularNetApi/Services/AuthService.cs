@@ -1,14 +1,15 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using AngularNetApi.Conext;
+﻿using AngularNetApi.Conext;
 using AngularNetApi.DTOs;
 using AngularNetApi.Entities;
+using AngularNetApi.Factory.Interfaces;
 using AngularNetApi.Interfaces;
 using AngularNetApi.Util;
 using AngularNetApiAngularNetApi.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace AngularNetApi.Services
 {
@@ -19,6 +20,7 @@ namespace AngularNetApi.Services
         private readonly SignInManager<UserCredentials> _signInManager;
         private readonly IConfiguration _configuration;
         private readonly ApplicationDbContext _db;
+        private readonly IClaimsFactory _claimsFactory;
 
         private const int TokenExpirationTime = 1; // 1 hour
 
@@ -27,7 +29,8 @@ namespace AngularNetApi.Services
             RoleManager<IdentityRole> roleManager,
             SignInManager<UserCredentials> signInManager,
             IConfiguration configuration,
-            ApplicationDbContext db
+            ApplicationDbContext db,
+            IClaimsFactory claimsFactory
         )
         {
             _userManager = userManager;
@@ -35,6 +38,7 @@ namespace AngularNetApi.Services
             _signInManager = signInManager;
             _configuration = configuration;
             _db = db;
+            _claimsFactory = claimsFactory;
         }
 
         public async Task<LoginResponse> Login(LoginRequest login)
@@ -221,14 +225,7 @@ namespace AngularNetApi.Services
             {
                 var jwt = _configuration.GetSection("Jwt");
                 var key = Encoding.ASCII.GetBytes(jwt["Key"]);
-
-                var claims = new[]
-                {
-                    new Claim("Email", user.Email),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // Genera un jti unico
-                    new Claim(ClaimTypes.NameIdentifier, user.Id), // Memorizza l'ID utente qui
-                    new Claim(ClaimTypes.Name, user.UserName) // Memorizza il nome utente qui
-                };
+                var claims = _claimsFactory.CreateClaims(user).GetClaims();
 
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {

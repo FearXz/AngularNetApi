@@ -1,4 +1,6 @@
-﻿using AngularNetApi.Interfaces;
+﻿using AngularNetApi.Factory;
+using AngularNetApi.Factory.Interfaces;
+using AngularNetApi.Interfaces;
 using AngularNetApiAngularNetApi.Services;
 
 namespace AngularNetApi.Services
@@ -11,6 +13,7 @@ namespace AngularNetApi.Services
         )
         {
             services.AddScoped<EUserManager>();
+            services.AddScoped<IClaimsFactory, ClaimsFactory>();
             services.AddScoped<IAuthService, AuthService>();
 
             return services;
