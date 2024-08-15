@@ -157,7 +157,7 @@ namespace AngularNetApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CompanyRegistries",
+                name: "CompanyProfiles",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -173,9 +173,9 @@ namespace AngularNetApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CompanyRegistries", x => x.Id);
+                    table.PrimaryKey("PK_CompanyProfiles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CompanyRegistries_AspNetUsers_UserCredentialsId",
+                        name: "FK_CompanyProfiles_AspNetUsers_UserCredentialsId",
                         column: x => x.UserCredentialsId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -183,7 +183,7 @@ namespace AngularNetApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserRegistries",
+                name: "UserProfiles",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -198,9 +198,9 @@ namespace AngularNetApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserRegistries", x => x.Id);
+                    table.PrimaryKey("PK_UserProfiles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserRegistries_AspNetUsers_UserCredentialsId",
+                        name: "FK_UserProfiles_AspNetUsers_UserCredentialsId",
                         column: x => x.UserCredentialsId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -247,14 +247,14 @@ namespace AngularNetApi.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CompanyRegistries_UserCredentialsId",
-                table: "CompanyRegistries",
+                name: "IX_CompanyProfiles_UserCredentialsId",
+                table: "CompanyProfiles",
                 column: "UserCredentialsId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserRegistries_UserCredentialsId",
-                table: "UserRegistries",
+                name: "IX_UserProfiles_UserCredentialsId",
+                table: "UserProfiles",
                 column: "UserCredentialsId",
                 unique: true);
         }
@@ -278,10 +278,10 @@ namespace AngularNetApi.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "CompanyRegistries");
+                name: "CompanyProfiles");
 
             migrationBuilder.DropTable(
-                name: "UserRegistries");
+                name: "UserProfiles");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

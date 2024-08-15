@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AngularNetApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240814205546_start")]
+    [Migration("20240815220452_start")]
     partial class start
     {
         /// <inheritdoc />
@@ -25,7 +25,7 @@ namespace AngularNetApi.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("AngularNetApi.Entities.CompanyRegistry", b =>
+            modelBuilder.Entity("AngularNetApi.Entities.CompanyProfile", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -70,7 +70,7 @@ namespace AngularNetApi.Migrations
                     b.HasIndex("UserCredentialsId")
                         .IsUnique();
 
-                    b.ToTable("CompanyRegistries");
+                    b.ToTable("CompanyProfiles");
                 });
 
             modelBuilder.Entity("AngularNetApi.Entities.UserCredentials", b =>
@@ -138,7 +138,7 @@ namespace AngularNetApi.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("AngularNetApi.Entities.UserRegistry", b =>
+            modelBuilder.Entity("AngularNetApi.Entities.UserProfile", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -179,7 +179,7 @@ namespace AngularNetApi.Migrations
                     b.HasIndex("UserCredentialsId")
                         .IsUnique();
 
-                    b.ToTable("UserRegistries");
+                    b.ToTable("UserProfiles");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -315,22 +315,22 @@ namespace AngularNetApi.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("AngularNetApi.Entities.CompanyRegistry", b =>
+            modelBuilder.Entity("AngularNetApi.Entities.CompanyProfile", b =>
                 {
                     b.HasOne("AngularNetApi.Entities.UserCredentials", "UserCredentials")
-                        .WithOne("CompanyRegistry")
-                        .HasForeignKey("AngularNetApi.Entities.CompanyRegistry", "UserCredentialsId")
+                        .WithOne("CompanyProfile")
+                        .HasForeignKey("AngularNetApi.Entities.CompanyProfile", "UserCredentialsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("UserCredentials");
                 });
 
-            modelBuilder.Entity("AngularNetApi.Entities.UserRegistry", b =>
+            modelBuilder.Entity("AngularNetApi.Entities.UserProfile", b =>
                 {
                     b.HasOne("AngularNetApi.Entities.UserCredentials", "UserCredentials")
-                        .WithOne("UserRegistry")
-                        .HasForeignKey("AngularNetApi.Entities.UserRegistry", "UserCredentialsId")
+                        .WithOne("UserProfile")
+                        .HasForeignKey("AngularNetApi.Entities.UserProfile", "UserCredentialsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -390,10 +390,10 @@ namespace AngularNetApi.Migrations
 
             modelBuilder.Entity("AngularNetApi.Entities.UserCredentials", b =>
                 {
-                    b.Navigation("CompanyRegistry")
+                    b.Navigation("CompanyProfile")
                         .IsRequired();
 
-                    b.Navigation("UserRegistry")
+                    b.Navigation("UserProfile")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

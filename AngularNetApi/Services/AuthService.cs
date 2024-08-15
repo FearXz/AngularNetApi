@@ -1,4 +1,7 @@
-﻿using AngularNetApi.Conext;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using AngularNetApi.Conext;
 using AngularNetApi.DTOs.AuthDto;
 using AngularNetApi.Entities;
 using AngularNetApi.Factory.ClaimFactory.Interfaces;
@@ -7,9 +10,6 @@ using AngularNetApi.Util;
 using AngularNetApiAngularNetApi.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace AngularNetApi.Services
 {
@@ -170,7 +170,7 @@ namespace AngularNetApi.Services
                         throw new Exception($"Error creating user: {errors}");
                     }
 
-                    UserRegistry userRegistry = new UserRegistry
+                    UserProfile userRegistry = new UserProfile
                     {
                         UserCredentialsId = user.Id,
                         Name = registerRequest.Name,
@@ -186,7 +186,7 @@ namespace AngularNetApi.Services
                     if (!addRoleResult.Succeeded)
                         throw new Exception("Error adding role to user");
 
-                    var addRegistryResult = await _userManager.AddUserRegistriesAsync(userRegistry);
+                    var addRegistryResult = await _userManager.AddUserProfileAsync(userRegistry);
 
                     if (addRegistryResult == null)
                         throw new Exception("Error adding user registry");

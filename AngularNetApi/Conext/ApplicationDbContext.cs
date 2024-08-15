@@ -14,7 +14,7 @@ namespace AngularNetApi.Conext
             base.OnModelCreating(modelBuilder);
         }
 
-        public DbSet<UserRegistry> UserRegistries { get; set; }
-        public DbSet<CompanyRegistry> CompanyRegistries { get; set; }
+        public DbSet<UserProfile> UserProfiles { get; set; }
+        public DbSet<CompanyProfile> CompanyProfiles { get; set; }
     }
 }

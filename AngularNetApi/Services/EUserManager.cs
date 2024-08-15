@@ -37,11 +37,11 @@ namespace AngularNetApiAngularNetApi.Services
             _db = db;
         }
 
-        public async Task<UserRegistry> AddUserRegistriesAsync(UserRegistry userRegistry)
+        public async Task<UserProfile> AddUserProfileAsync(UserProfile user)
         {
             try
             {
-                await _db.UserRegistries.AddAsync(userRegistry);
+                await _db.UserProfiles.AddAsync(user);
                 await _db.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -49,44 +49,58 @@ namespace AngularNetApiAngularNetApi.Services
                 throw new Exception(ex.Message);
             }
 
-            return userRegistry;
+            return user;
         }
 
-        public async Task<UserRegistry?> GetUserRegistryAsync(UserCredentials user)
+        public async Task<UserProfile?> GetUserProfileAsync(UserCredentials user)
         {
-            return await _db
-                .UserRegistries.Where(x => x.UserCredentialsId == user.Id)
-                .Select(x => new UserRegistry
-                {
-                    Id = x.Id,
-                    UserCredentialsId = x.UserCredentialsId,
-                    Address = x.Address,
-                    City = x.City,
-                    CAP = x.CAP,
-                    MobileNumber = x.MobileNumber,
-                    Name = x.Name,
-                    Surname = x.Surname
-                })
-                .FirstOrDefaultAsync();
+            try
+            {
+                return await _db
+                    .UserProfiles.Where(x => x.UserCredentialsId == user.Id)
+                    .Select(x => new UserProfile
+                    {
+                        Id = x.Id,
+                        UserCredentialsId = x.UserCredentialsId,
+                        Address = x.Address,
+                        City = x.City,
+                        CAP = x.CAP,
+                        MobileNumber = x.MobileNumber,
+                        Name = x.Name,
+                        Surname = x.Surname
+                    })
+                    .FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
-        public async Task<CompanyRegistry?> GetCompanyRegistryAsync(UserCredentials user)
+        public async Task<CompanyProfile?> GetCompanyProfileAsync(UserCredentials user)
         {
-            return await _db
-                .CompanyRegistries.Where(x => x.UserCredentialsId == user.Id)
-                .Select(x => new CompanyRegistry
-                {
-                    Id = x.Id,
-                    UserCredentialsId = x.UserCredentialsId,
-                    Address = x.Address,
-                    City = x.City,
-                    CAP = x.CAP,
-                    CompanyName = x.CompanyName,
-                    VATNumber = x.VATNumber,
-                    MobileNumber = x.MobileNumber,
-                    TelephoneNumber = x.TelephoneNumber
-                })
-                .FirstOrDefaultAsync();
+            try
+            {
+                return await _db
+                    .CompanyProfiles.Where(x => x.UserCredentialsId == user.Id)
+                    .Select(x => new CompanyProfile
+                    {
+                        Id = x.Id,
+                        UserCredentialsId = x.UserCredentialsId,
+                        Address = x.Address,
+                        City = x.City,
+                        CAP = x.CAP,
+                        CompanyName = x.CompanyName,
+                        VATNumber = x.VATNumber,
+                        MobileNumber = x.MobileNumber,
+                        TelephoneNumber = x.TelephoneNumber
+                    })
+                    .FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

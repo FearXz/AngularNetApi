@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AngularNetApi.Entities
 {
-    public class UserRegistry
+    public class UserProfile
     {
         [Key]
         public int Id { get; set; }
@@ -29,6 +29,12 @@ namespace AngularNetApi.Entities
 
         [Required]
         public string MobileNumber { get; set; }
+
+        [Required]
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        [Required]
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         // Navigation property
 

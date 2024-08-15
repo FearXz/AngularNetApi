@@ -24,7 +24,7 @@ namespace AngularNetApi.Factory.ClaimFactory
 
             if (userRole == Roles.USER || userRole == Roles.ADMIN)
             {
-                var UserData = _userManager.GetUserRegistryAsync(user).Result;
+                var UserData = _userManager.GetUserProfileAsync(user).Result;
                 if (UserData == null)
                     throw new Exception("User has no registry");
 
@@ -37,7 +37,7 @@ namespace AngularNetApi.Factory.ClaimFactory
             }
             else if (userRole == Roles.COMPANY)
             {
-                var CompanyData = _userManager.GetCompanyRegistryAsync(user).Result;
+                var CompanyData = _userManager.GetCompanyProfileAsync(user).Result;
                 if (CompanyData == null)
                     throw new Exception("Company has no registry");
 
