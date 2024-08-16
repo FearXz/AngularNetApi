@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace AngularNetApi.Entities
 {
-    public class UserCredentials : IdentityUser
+    public class ApplicationUser : IdentityUser
     {
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.Now;
@@ -11,8 +11,8 @@ namespace AngularNetApi.Entities
         [Required]
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
+        // Navigation properties
         public virtual UserProfile UserProfile { get; set; }
-
         public virtual CompanyProfile CompanyProfile { get; set; }
     }
 }

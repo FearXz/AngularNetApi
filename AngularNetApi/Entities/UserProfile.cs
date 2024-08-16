@@ -24,6 +24,6 @@ namespace AngularNetApi.Entities
 
         // Navigation property
 
-        public virtual UserCredentials UserCredentials { get; set; }
+        public virtual ApplicationUser ApplicationUser { get; set; }
     }
 }

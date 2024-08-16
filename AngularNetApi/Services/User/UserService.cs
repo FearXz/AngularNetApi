@@ -14,13 +14,13 @@ namespace AngularNetApi.Services.User
         private readonly IUserRepository _userRepository;
         private readonly ApplicationDbContext _db;
         private readonly IMapper _mapper;
-        private readonly UserManager<UserCredentials> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public UserService(
             IUserRepository userRepository,
             ApplicationDbContext db,
             IMapper mapper,
-            UserManager<UserCredentials> userManager
+            UserManager<ApplicationUser> userManager
         )
         {
             _userRepository = userRepository;
@@ -50,7 +50,7 @@ namespace AngularNetApi.Services.User
                     }
 
                     // Map CreateUserRequest to UserCredentials
-                    var user = _mapper.Map<UserCredentials>(userRequest);
+                    var user = _mapper.Map<ApplicationUser>(userRequest);
 
                     // Create userCredentials
                     var createUserResult = await _userManager.CreateAsync(
@@ -70,16 +70,10 @@ namespace AngularNetApi.Services.User
 
                     // Map CreateUserRequest to UserProfile
                     var userProfile = _mapper.Map<UserProfile>(userRequest);
-                    userProfile.UserCredentialsId = user.Id;
+                    userProfile.ApplicationUserId = user.Id;
 
                     // Add Role to user
                     var addRoleResult = await _userManager.AddToRoleAsync(user, Roles.USER);
-
-                    // Throw ServerErrorException if user was not added to role
-                    if (!addRoleResult.Succeeded)
-                    {
-                        throw new ServerErrorException("Error adding role to user");
-                    }
 
                     // Create userProfile
                     var userProfileResult = await _userRepository.CreateAsync(userProfile);
@@ -94,12 +88,7 @@ namespace AngularNetApi.Services.User
 
                     return new CreateUserResponse { Success = true, NewUserId = user.Id };
                 }
-                catch (BadRequestException ex)
-                {
-                    await transaction.RollbackAsync();
-                    throw;
-                }
-                catch (ServerErrorException ex)
+                catch (Exception ex) when (ex is BadRequestException || ex is ServerErrorException)
                 {
                     await transaction.RollbackAsync();
                     throw;

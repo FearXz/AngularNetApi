@@ -13,17 +13,17 @@ namespace AngularNetApi.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly UserManager<UserCredentials> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly SignInManager<UserCredentials> _signInManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IConfiguration _configuration;
         public readonly IUserService _userSvc;
         private readonly IAuthService _authSvc;
 
         public AuthController(
-            UserManager<UserCredentials> userManager,
+            UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
-            SignInManager<UserCredentials> signInManager,
+            SignInManager<ApplicationUser> signInManager,
             IConfiguration configuration,
             IAuthService authService,
             IUserService userService
@@ -47,12 +47,38 @@ namespace AngularNetApi.Controllers
             }
             try
             {
-                LoginResponse result = await _authSvc.Login(login);
-                return Ok(result);
+                return Ok(await _authSvc.Login(login));
+            }
+            catch (BadRequestException ex)
+            {
+                return BadRequest(
+                    new { message = ex.Message, details = ex.InnerException?.Message }
+                );
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message, details = ex.InnerException?.Message });
+            }
+            catch (LockedOutException ex)
+            {
+                return StatusCode(
+                    423,
+                    new { message = ex.Message, details = ex.InnerException?.Message }
+                );
+            }
+            catch (ServerErrorException ex)
+            {
+                return StatusCode(
+                    500,
+                    new { message = ex.Message, details = ex.InnerException?.Message }
+                );
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode(
+                    500,
+                    new { message = ex.Message, details = ex.InnerException?.Message }
+                );
             }
         }
 

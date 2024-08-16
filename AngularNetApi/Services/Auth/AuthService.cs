@@ -3,10 +3,9 @@ using System.Security.Claims;
 using System.Text;
 using AngularNetApi.Conext;
 using AngularNetApi.DTOs.Auth;
-using AngularNetApi.DTOs.User;
 using AngularNetApi.Entities;
+using AngularNetApi.Exceptions;
 using AngularNetApi.Services.Auth;
-using AngularNetApi.Util;
 using AngularNetApiAngularNetApi.Services;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
@@ -18,7 +17,7 @@ namespace AngularNetApi.Services
     {
         private readonly EUserManager _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly SignInManager<UserCredentials> _signInManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IConfiguration _configuration;
         private readonly ApplicationDbContext _db;
         private readonly IMapper _mapper;
@@ -28,7 +27,7 @@ namespace AngularNetApi.Services
         public AuthService(
             EUserManager userManager,
             RoleManager<IdentityRole> roleManager,
-            SignInManager<UserCredentials> signInManager,
+            SignInManager<ApplicationUser> signInManager,
             IConfiguration configuration,
             ApplicationDbContext db,
             IMapper mapper
@@ -46,26 +45,38 @@ namespace AngularNetApi.Services
         {
             try
             {
+                // Attempt to sign in the user
                 var result = await _signInManager.PasswordSignInAsync(
                     login.Email,
                     login.Password,
                     true,
                     lockoutOnFailure: false
                 );
-
+                // Throw exception if sign in fails
                 if (!result.Succeeded)
-                    throw new Exception("Invalid credentials");
+                {
+                    throw new BadRequestException("Invalid credentials");
+                }
+                // Throw exception if user is locked out
                 if (result.IsLockedOut)
-                    throw new Exception("User is locked out");
+                {
+                    throw new LockedOutException("User account is locked out.");
+                }
 
+                // Get user by email
                 var user = await _userManager.FindByEmailAsync(login.Email);
 
+                // Throw exception if user is null
                 if (user == null)
-                    throw new Exception("User not found");
+                {
+                    throw new NotFoundException("User account was not found");
+                }
 
+                // Generate access token and refresh token
                 var accessToken = GenerateToken(user);
                 var refreshToken = GenerateToken(user);
 
+                // Create Identity refresh token object
                 var token = new IdentityUserToken<string>
                 {
                     UserId = user.Id,
@@ -74,6 +85,7 @@ namespace AngularNetApi.Services
                     Value = refreshToken
                 };
 
+                // Set refresh token in user's authentication tokens
                 await _userManager.SetAuthenticationTokenAsync(
                     user,
                     token.LoginProvider,
@@ -83,8 +95,16 @@ namespace AngularNetApi.Services
                 return new LoginResponse { AccessToken = accessToken, RefreshToken = refreshToken };
             }
             catch (Exception ex)
+                when (ex is BadRequestException
+                    || ex is LockedOutException
+                    || ex is NotFoundException
+                )
             {
-                throw new Exception(ex.Message);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new ServerErrorException("An unexpected error occurred during login.", ex);
             }
         }
 
@@ -148,48 +168,7 @@ namespace AngularNetApi.Services
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        public async Task<CreateUserResponse> RegisterUser(CreateUserRequest registerRequest)
-        {
-            using (var transaction = await _db.Database.BeginTransactionAsync())
-            {
-                try
-                {
-                    var user = _mapper.Map<UserCredentials>(registerRequest);
-
-                    var result = await _userManager.CreateAsync(user, registerRequest.Password);
-
-                    if (!result.Succeeded)
-                    {
-                        var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-                        throw new Exception($"Error creating user: {errors}");
-                    }
-
-                    var userProfile = _mapper.Map<UserProfile>(registerRequest);
-                    userProfile.UserCredentialsId = user.Id;
-
-                    var addRoleResult = await _userManager.AddToRoleAsync(user, Roles.USER);
-
-                    if (!addRoleResult.Succeeded)
-                        throw new Exception("Error adding role to user");
-
-                    var addRegistryResult = await _userManager.AddUserProfileAsync(userProfile);
-
-                    if (addRegistryResult == null)
-                        throw new Exception("Error adding user registry");
-
-                    await transaction.CommitAsync();
-
-                    return new CreateUserResponse { Success = true, NewUserId = user.Id };
-                }
-                catch (Exception ex)
-                {
-                    await transaction.RollbackAsync();
-                    throw new Exception(ex.Message);
-                }
+                throw new ServerErrorException(ex.Message);
             }
         }
 
@@ -203,7 +182,7 @@ namespace AngularNetApi.Services
             throw new NotImplementedException();
         }
 
-        private string GenerateToken(UserCredentials user)
+        private string GenerateToken(ApplicationUser user)
         {
             try
             {
@@ -229,7 +208,7 @@ namespace AngularNetApi.Services
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new ServerErrorException(ex.Message);
             }
         }
 
@@ -272,7 +251,7 @@ namespace AngularNetApi.Services
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new ServerErrorException(ex.Message);
             }
         }
     }

@@ -8,7 +8,7 @@ namespace AngularNetApi.MappingProfile
     {
         public AuthMappingProfile()
         {
-            CreateMap<CreateUserRequest, UserCredentials>()
+            CreateMap<CreateUserRequest, ApplicationUser>()
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));
 

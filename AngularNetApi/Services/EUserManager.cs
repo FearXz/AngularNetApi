@@ -9,20 +9,20 @@ using Microsoft.Extensions.Options;
 
 namespace AngularNetApiAngularNetApi.Services
 {
-    public class EUserManager : UserManager<UserCredentials>
+    public class EUserManager : UserManager<ApplicationUser>
     {
         private readonly ApplicationDbContext _db;
 
         public EUserManager(
-            IUserStore<UserCredentials> store,
+            IUserStore<ApplicationUser> store,
             IOptions<IdentityOptions> optionsAccessor,
-            IPasswordHasher<UserCredentials> passwordHasher,
-            IEnumerable<IUserValidator<UserCredentials>> userValidators,
-            IEnumerable<IPasswordValidator<UserCredentials>> passwordValidators,
+            IPasswordHasher<ApplicationUser> passwordHasher,
+            IEnumerable<IUserValidator<ApplicationUser>> userValidators,
+            IEnumerable<IPasswordValidator<ApplicationUser>> passwordValidators,
             ILookupNormalizer keyNormalizer,
             IdentityErrorDescriber errors,
             IServiceProvider services,
-            ILogger<UserManager<UserCredentials>> logger,
+            ILogger<UserManager<ApplicationUser>> logger,
             ApplicationDbContext db
         )
             : base(
@@ -98,7 +98,7 @@ namespace AngularNetApiAngularNetApi.Services
             }
         }
 
-        public List<Claim> CreateClaims(UserCredentials user)
+        public List<Claim> CreateClaims(ApplicationUser user)
         {
             var userRole = GetRolesAsync(user).Result[0];
 
@@ -139,16 +139,16 @@ namespace AngularNetApiAngularNetApi.Services
             }
         }
 
-        private async Task<UserProfile?> GetUserProfileAsync(UserCredentials user)
+        private async Task<UserProfile?> GetUserProfileAsync(ApplicationUser user)
         {
             try
             {
                 return await _db
-                    .UserProfiles.Where(x => x.UserCredentialsId == user.Id)
+                    .UserProfiles.Where(x => x.ApplicationUserId == user.Id)
                     .Select(x => new UserProfile
                     {
                         Id = x.Id,
-                        UserCredentialsId = x.UserCredentialsId,
+                        ApplicationUserId = x.ApplicationUserId,
                         Address = x.Address,
                         City = x.City,
                         CAP = x.CAP,
@@ -164,16 +164,16 @@ namespace AngularNetApiAngularNetApi.Services
             }
         }
 
-        private async Task<CompanyProfile?> GetCompanyProfileAsync(UserCredentials user)
+        private async Task<CompanyProfile?> GetCompanyProfileAsync(ApplicationUser user)
         {
             try
             {
                 return await _db
-                    .CompanyProfiles.Where(x => x.UserCredentialsId == user.Id)
+                    .CompanyProfiles.Where(x => x.ApplicationUserId == user.Id)
                     .Select(x => new CompanyProfile
                     {
                         Id = x.Id,
-                        UserCredentialsId = x.UserCredentialsId,
+                        ApplicationUserId = x.ApplicationUserId,
                         Address = x.Address,
                         City = x.City,
                         CAP = x.CAP,

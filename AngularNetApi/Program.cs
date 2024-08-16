@@ -47,7 +47,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 });
 
 builder
-    .Services.AddIdentityCore<UserCredentials>()
+    .Services.AddIdentityCore<ApplicationUser>()
     .AddRoles<IdentityRole>()
     .AddSignInManager()
     .AddDefaultTokenProviders()

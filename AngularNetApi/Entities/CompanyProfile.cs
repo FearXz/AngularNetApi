@@ -26,6 +26,6 @@ namespace AngularNetApi.Entities
         public string MobileNumber { get; set; }
 
         // Navigation property
-        public virtual UserCredentials UserCredentials { get; set; }
+        public virtual ApplicationUser ApplicationUser { get; set; }
     }
 }
