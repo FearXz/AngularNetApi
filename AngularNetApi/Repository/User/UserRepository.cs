@@ -56,10 +56,11 @@ namespace AngularNetApi.Repository.User
                     throw new NotFoundException($"User with ID {user.Id} not found.");
                 }
 
-                _db.UserProfiles.Update(user);
+                var updatedUser = _db.UserProfiles.Update(user);
+
                 await _db.SaveChangesAsync();
 
-                return user;
+                return updatedUser.Entity;
             }
             catch (Exception ex)
             {

@@ -40,19 +40,25 @@ namespace AngularNetApi.Services.User
             {
                 try
                 {
+                    // Check if user with email already exists
                     var userExists = await _userManager.FindByEmailAsync(userRequest.Email);
+
+                    // If user exists, throw BadRequestException
                     if (userExists != null && userExists.Email == userRequest.Email)
                     {
                         throw new BadRequestException("User with this email already exists");
                     }
 
+                    // Map CreateUserRequest to UserCredentials
                     var user = _mapper.Map<UserCredentials>(userRequest);
 
+                    // Create user
                     var createUserResult = await _userManager.CreateAsync(
                         user,
                         userRequest.Password
                     );
 
+                    // Check if user was created successfully
                     if (!createUserResult.Succeeded)
                     {
                         var errors = string.Join(
@@ -61,19 +67,23 @@ namespace AngularNetApi.Services.User
                         );
                         throw new BadRequestException($"Error when creating user: {errors}");
                     }
-
+                    // Map CreateUserRequest to UserProfile
                     var userProfile = _mapper.Map<UserProfile>(userRequest);
                     userProfile.UserCredentialsId = user.Id;
 
+                    // Add user to role
                     var addRoleResult = await _userManager.AddToRoleAsync(user, Roles.USER);
 
+                    // Check if user was added to role successfully
                     if (!addRoleResult.Succeeded)
                     {
                         throw new ServerErrorException("Error adding role to user");
                     }
 
+                    // Create userProfile
                     var userProfileResult = await _userRepository.CreateAsync(userProfile);
 
+                    // Check if userProfile was created successfully
                     if (userProfileResult == null)
                     {
                         throw new ServerErrorException("Error when adding userProfile");
@@ -85,19 +95,16 @@ namespace AngularNetApi.Services.User
                 }
                 catch (BadRequestException ex)
                 {
-                    // Rollback in case of business rule violations
                     await transaction.RollbackAsync();
                     throw;
                 }
                 catch (ServerErrorException ex)
                 {
-                    // Rollback in case of server errors
                     await transaction.RollbackAsync();
                     throw;
                 }
                 catch (Exception ex)
                 {
-                    // Rollback for all other unexpected errors
                     await transaction.RollbackAsync();
                     throw new ServerErrorException(
                         "An unexpected error occurred during user creation.",
