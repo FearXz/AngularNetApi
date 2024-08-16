@@ -1,4 +1,4 @@
-﻿namespace AngularNetApi.DTOs.AuthDto
+﻿namespace AngularNetApi.DTOs.Auth
 {
     public class LoginRequest
     {

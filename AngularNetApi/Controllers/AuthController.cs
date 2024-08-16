@@ -1,4 +1,5 @@
-﻿using AngularNetApi.DTOs.AuthDto;
+﻿using AngularNetApi.DTOs.Auth;
+using AngularNetApi.DTOs.User;
 using AngularNetApi.Entities;
 using AngularNetApi.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -71,7 +72,7 @@ namespace AngularNetApi.Controllers
         }
 
         [HttpPost("registerUser")]
-        public async Task<IActionResult> RegisterUser([FromBody] UserRegisterRequest newUser)
+        public async Task<IActionResult> RegisterUser([FromBody] CreateUserRequest newUser)
         {
             if (!ModelState.IsValid)
             {
@@ -80,7 +81,7 @@ namespace AngularNetApi.Controllers
             }
             try
             {
-                UserRegisterResponse result = await _authSvc.RegisterUser(newUser);
+                CreateUserResponse result = await _authSvc.RegisterUser(newUser);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -96,6 +97,14 @@ namespace AngularNetApi.Controllers
             if (user == null)
             {
                 return NotFound("User not found");
+            }
+
+            // prima rimuovo tutti i ruoli
+            var userRoles = await _userManager.GetRolesAsync(user);
+            var resultRemove = await _userManager.RemoveFromRolesAsync(user, userRoles);
+            if (!resultRemove.Succeeded)
+            {
+                return BadRequest(resultRemove.Errors);
             }
 
             var result = await _userManager.AddToRoleAsync(user, role);

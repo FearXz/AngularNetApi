@@ -1,6 +1,6 @@
-﻿namespace AngularNetApi.DTOs.AuthDto
+﻿namespace AngularNetApi.DTOs.User
 {
-    public class UserRegisterResponse
+    public class CreateUserResponse
     {
         public string NewUserId { get; set; } = string.Empty;
         public bool Success { get; set; }

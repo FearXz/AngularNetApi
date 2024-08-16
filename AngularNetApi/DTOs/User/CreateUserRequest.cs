@@ -1,6 +1,6 @@
-﻿namespace AngularNetApi.DTOs.AuthDto
+﻿namespace AngularNetApi.DTOs.User
 {
-    public class UserRegisterRequest
+    public class CreateUserRequest
     {
         public string Email { get; set; }
         public string Password { get; set; }

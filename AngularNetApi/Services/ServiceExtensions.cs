@@ -1,6 +1,6 @@
-﻿using AngularNetApi.Factory.ClaimFactory;
-using AngularNetApi.Factory.ClaimFactory.Interfaces;
-using AngularNetApi.Interfaces;
+﻿using AngularNetApi.Interfaces;
+using AngularNetApi.MappingProfile;
+using AngularNetApi.Repository;
 using AngularNetApiAngularNetApi.Services;
 
 namespace AngularNetApi.Services
@@ -12,8 +12,10 @@ namespace AngularNetApi.Services
             IConfiguration configuration
         )
         {
+            services.AddAutoMapper(typeof(AuthMappingProfile));
+
             services.AddScoped<EUserManager>();
-            services.AddScoped<IClaimsFactory, ClaimsFactory>();
+            services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IAuthService, AuthService>();
 
             return services;

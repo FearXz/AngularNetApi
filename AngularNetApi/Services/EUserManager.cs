@@ -1,5 +1,8 @@
-﻿using AngularNetApi.Conext;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using AngularNetApi.Conext;
 using AngularNetApi.Entities;
+using AngularNetApi.Util;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -52,7 +55,91 @@ namespace AngularNetApiAngularNetApi.Services
             return user;
         }
 
-        public async Task<UserProfile?> GetUserProfileAsync(UserCredentials user)
+        public async Task<ProfileBase> GetProfileAsync(string userId)
+        {
+            try
+            {
+                var user = await FindByIdAsync(userId);
+
+                if (user == null)
+                    throw new Exception("User not found");
+
+                var userRole = await GetRolesAsync(user);
+
+                if (userRole.Count == 0)
+                    throw new Exception("User has no role");
+
+                if (userRole[0] == Roles.USER || userRole[0] == Roles.ADMIN)
+                {
+                    UserProfile UserProfile = await GetUserProfileAsync(user);
+
+                    if (UserProfile == null)
+                        throw new Exception("Admin has no profile");
+
+                    return UserProfile;
+                }
+                else if (userRole[0] == Roles.COMPANY)
+                {
+                    CompanyProfile companyProfile = await GetCompanyProfileAsync(user);
+
+                    if (companyProfile == null)
+                        throw new Exception("Company has no profile");
+
+                    return companyProfile;
+                }
+                else
+                {
+                    throw new Exception("Unknown role");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public List<Claim> CreateClaims(UserCredentials user)
+        {
+            var userRole = GetRolesAsync(user).Result[0];
+
+            if (string.IsNullOrEmpty(userRole))
+                throw new Exception("User has no role");
+
+            if (userRole == Roles.USER || userRole == Roles.ADMIN)
+            {
+                UserProfile userProfile = (UserProfile)GetProfileAsync(user.Id).Result;
+                if (userProfile == null)
+                    throw new Exception("User has no registry");
+
+                return new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(ClaimTypes.Role, userRole),
+                    new Claim(ClaimTypes.Name, userProfile.Name)
+                };
+            }
+            else if (userRole == Roles.COMPANY)
+            {
+                CompanyProfile CompanyProfile = (CompanyProfile)GetProfileAsync(user.Id).Result;
+                if (CompanyProfile == null)
+                    throw new Exception("Company has no registry");
+
+                return new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(ClaimTypes.Role, userRole),
+                    new Claim(ClaimTypes.Name, CompanyProfile.CompanyName)
+                };
+            }
+            else
+            {
+                throw new Exception("Unknown role");
+            }
+        }
+
+        private async Task<UserProfile?> GetUserProfileAsync(UserCredentials user)
         {
             try
             {
@@ -77,7 +164,7 @@ namespace AngularNetApiAngularNetApi.Services
             }
         }
 
-        public async Task<CompanyProfile?> GetCompanyProfileAsync(UserCredentials user)
+        private async Task<CompanyProfile?> GetCompanyProfileAsync(UserCredentials user)
         {
             try
             {

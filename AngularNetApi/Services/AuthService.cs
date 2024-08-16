@@ -2,12 +2,13 @@
 using System.Security.Claims;
 using System.Text;
 using AngularNetApi.Conext;
-using AngularNetApi.DTOs.AuthDto;
+using AngularNetApi.DTOs.Auth;
+using AngularNetApi.DTOs.User;
 using AngularNetApi.Entities;
-using AngularNetApi.Factory.ClaimFactory.Interfaces;
 using AngularNetApi.Interfaces;
 using AngularNetApi.Util;
 using AngularNetApiAngularNetApi.Services;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
@@ -20,7 +21,7 @@ namespace AngularNetApi.Services
         private readonly SignInManager<UserCredentials> _signInManager;
         private readonly IConfiguration _configuration;
         private readonly ApplicationDbContext _db;
-        private readonly IClaimsFactory _claimsFactory;
+        private readonly IMapper _mapper;
 
         private const int TokenExpirationTime = 1; // 1 hour
 
@@ -30,7 +31,7 @@ namespace AngularNetApi.Services
             SignInManager<UserCredentials> signInManager,
             IConfiguration configuration,
             ApplicationDbContext db,
-            IClaimsFactory claimsFactory
+            IMapper mapper
         )
         {
             _userManager = userManager;
@@ -38,7 +39,7 @@ namespace AngularNetApi.Services
             _signInManager = signInManager;
             _configuration = configuration;
             _db = db;
-            _claimsFactory = claimsFactory;
+            _mapper = mapper;
         }
 
         public async Task<LoginResponse> Login(LoginRequest login)
@@ -151,17 +152,14 @@ namespace AngularNetApi.Services
             }
         }
 
-        public async Task<UserRegisterResponse> RegisterUser(UserRegisterRequest registerRequest)
+        public async Task<CreateUserResponse> RegisterUser(CreateUserRequest registerRequest)
         {
             using (var transaction = await _db.Database.BeginTransactionAsync())
             {
                 try
                 {
-                    var user = new UserCredentials
-                    {
-                        UserName = registerRequest.Email,
-                        Email = registerRequest.Email
-                    };
+                    var user = _mapper.Map<UserCredentials>(registerRequest);
+
                     var result = await _userManager.CreateAsync(user, registerRequest.Password);
 
                     if (!result.Succeeded)
@@ -170,30 +168,22 @@ namespace AngularNetApi.Services
                         throw new Exception($"Error creating user: {errors}");
                     }
 
-                    UserProfile userRegistry = new UserProfile
-                    {
-                        UserCredentialsId = user.Id,
-                        Name = registerRequest.Name,
-                        Surname = registerRequest.Surname,
-                        Address = registerRequest.Address,
-                        City = registerRequest.City,
-                        CAP = registerRequest.CAP,
-                        MobileNumber = registerRequest.MobileNumber
-                    };
+                    var userProfile = _mapper.Map<UserProfile>(registerRequest);
+                    userProfile.UserCredentialsId = user.Id;
 
                     var addRoleResult = await _userManager.AddToRoleAsync(user, Roles.USER);
 
                     if (!addRoleResult.Succeeded)
                         throw new Exception("Error adding role to user");
 
-                    var addRegistryResult = await _userManager.AddUserProfileAsync(userRegistry);
+                    var addRegistryResult = await _userManager.AddUserProfileAsync(userProfile);
 
                     if (addRegistryResult == null)
                         throw new Exception("Error adding user registry");
 
                     await transaction.CommitAsync();
 
-                    return new UserRegisterResponse { Success = true, NewUserId = user.Id };
+                    return new CreateUserResponse { Success = true, NewUserId = user.Id };
                 }
                 catch (Exception ex)
                 {
@@ -219,7 +209,7 @@ namespace AngularNetApi.Services
             {
                 var jwt = _configuration.GetSection("Jwt");
                 var key = Encoding.ASCII.GetBytes(jwt["Key"]);
-                var claims = _claimsFactory.CreateClaims(user).GetClaims();
+                var claims = _userManager.CreateClaims(user);
 
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
