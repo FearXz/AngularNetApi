@@ -52,13 +52,13 @@ namespace AngularNetApi.Services.User
                     // Map CreateUserRequest to UserCredentials
                     var user = _mapper.Map<UserCredentials>(userRequest);
 
-                    // Create user
+                    // Create userCredentials
                     var createUserResult = await _userManager.CreateAsync(
                         user,
                         userRequest.Password
                     );
 
-                    // Check if user was created successfully
+                    // Throw BadRequestException if user was not created
                     if (!createUserResult.Succeeded)
                     {
                         var errors = string.Join(
@@ -67,14 +67,15 @@ namespace AngularNetApi.Services.User
                         );
                         throw new BadRequestException($"Error when creating user: {errors}");
                     }
+
                     // Map CreateUserRequest to UserProfile
                     var userProfile = _mapper.Map<UserProfile>(userRequest);
                     userProfile.UserCredentialsId = user.Id;
 
-                    // Add user to role
+                    // Add Role to user
                     var addRoleResult = await _userManager.AddToRoleAsync(user, Roles.USER);
 
-                    // Check if user was added to role successfully
+                    // Throw ServerErrorException if user was not added to role
                     if (!addRoleResult.Succeeded)
                     {
                         throw new ServerErrorException("Error adding role to user");
@@ -83,7 +84,7 @@ namespace AngularNetApi.Services.User
                     // Create userProfile
                     var userProfileResult = await _userRepository.CreateAsync(userProfile);
 
-                    // Check if userProfile was created successfully
+                    // Throw ServerErrorException if userProfile was not created
                     if (userProfileResult == null)
                     {
                         throw new ServerErrorException("Error when adding userProfile");
