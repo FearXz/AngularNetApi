@@ -1,8 +1,8 @@
 ﻿using AngularNetApi.Entities;
 
-namespace AngularNetApi.Services
+namespace AngularNetApi.Repository.User
 {
-    public interface IUserService
+    public interface IUserRepository
     {
         Task<UserProfile> GetByIdAsync(string userId);
         Task<UserProfile> CreateAsync(UserProfile user);

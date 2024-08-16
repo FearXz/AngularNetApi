@@ -5,7 +5,7 @@ using AngularNetApi.Conext;
 using AngularNetApi.DTOs.Auth;
 using AngularNetApi.DTOs.User;
 using AngularNetApi.Entities;
-using AngularNetApi.Interfaces;
+using AngularNetApi.Services.Auth;
 using AngularNetApi.Util;
 using AngularNetApiAngularNetApi.Services;
 using AutoMapper;

@@ -1,7 +1,8 @@
 ﻿using AngularNetApi.Conext;
 using AngularNetApi.Entities;
+using AngularNetApi.Exceptions;
 
-namespace AngularNetApi.Repository
+namespace AngularNetApi.Repository.User
 {
     public class UserRepository : IUserRepository
     {
@@ -20,13 +21,13 @@ namespace AngularNetApi.Repository
 
                 if (user == null)
                 {
-                    throw new Exception("User not found");
+                    throw new NotFoundException($"User with ID {userId} not found.");
                 }
                 return user;
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new ServerErrorException("Error when finding User");
             }
         }
 
@@ -35,18 +36,13 @@ namespace AngularNetApi.Repository
             try
             {
                 var newUser = await _db.UserProfiles.AddAsync(user);
-
-                if (newUser == null)
-                {
-                    throw new Exception("User not created");
-                }
                 await _db.SaveChangesAsync();
 
                 return newUser.Entity;
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new ServerErrorException("Error when creating User");
             }
         }
 
@@ -56,17 +52,13 @@ namespace AngularNetApi.Repository
             {
                 var updatedUser = _db.UserProfiles.Update(user);
 
-                if (updatedUser == null)
-                {
-                    throw new Exception("User not updated");
-                }
                 await _db.SaveChangesAsync();
 
                 return updatedUser.Entity;
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new ServerErrorException("Error when updating User");
             }
         }
     }

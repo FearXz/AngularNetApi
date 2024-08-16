@@ -2,7 +2,7 @@
 using AngularNetApi.DTOs.User;
 using Microsoft.AspNetCore.Identity;
 
-namespace AngularNetApi.Interfaces
+namespace AngularNetApi.Services.Auth
 {
     public interface IAuthService
     {

@@ -1,7 +1,7 @@
 ﻿using AngularNetApi.DTOs.Auth;
 using AngularNetApi.DTOs.User;
 using AngularNetApi.Entities;
-using AngularNetApi.Interfaces;
+using AngularNetApi.Services.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -86,7 +86,7 @@ namespace AngularNetApi.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode(500, new { message = "An unexpected error occurred." });
             }
         }
 
