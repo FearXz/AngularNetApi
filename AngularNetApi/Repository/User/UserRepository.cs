@@ -35,10 +35,12 @@ namespace AngularNetApi.Repository.User
         {
             try
             {
-                var newUser = await _db.UserProfiles.AddAsync(user);
+                await _db.UserProfiles.AddAsync(user);
                 await _db.SaveChangesAsync();
+                // ritorna l'utente appena creato
+                var newUser = await _db.UserProfiles.FindAsync(user.Id);
 
-                return newUser.Entity;
+                return newUser;
             }
             catch (Exception ex)
             {
