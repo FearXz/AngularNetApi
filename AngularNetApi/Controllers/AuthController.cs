@@ -85,20 +85,28 @@ namespace AngularNetApi.Controllers
             }
             try
             {
-                CreateUserResponse result = await _userSvc.CreateAsync(newUser);
-                return Ok(result);
+                return Ok(await _userSvc.CreateAsync(newUser));
             }
             catch (BadRequestException ex)
             {
-                return BadRequest(new { message = ex.Message });
+                return BadRequest(
+                    new { message = ex.Message, details = ex.InnerException?.Message }
+                );
             }
             catch (ServerErrorException ex)
             {
-                return StatusCode(500, new { message = ex.Message });
+                // Gestione delle eccezioni generiche del server
+                return StatusCode(
+                    500,
+                    new { message = ex.Message, details = ex.InnerException?.Message }
+                );
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = ex.Message });
+                return StatusCode(
+                    500,
+                    new { message = ex.Message, details = ex.InnerException?.Message }
+                );
             }
         }
 

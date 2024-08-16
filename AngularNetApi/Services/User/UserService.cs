@@ -16,12 +16,17 @@ namespace AngularNetApi.Services.User
         private readonly IMapper _mapper;
         private readonly UserManager<UserCredentials> _userManager;
 
-        public UserService(IUserRepository userRepository, ApplicationDbContext db, IMapper mapper)
+        public UserService(
+            IUserRepository userRepository,
+            ApplicationDbContext db,
+            IMapper mapper,
+            UserManager<UserCredentials> userManager
+        )
         {
             _userRepository = userRepository;
             _db = db;
             _mapper = mapper;
-            _mapper = mapper;
+            _userManager = userManager;
         }
 
         public Task<UserProfile> GetByIdAsync(string userId)
@@ -35,6 +40,12 @@ namespace AngularNetApi.Services.User
             {
                 try
                 {
+                    var userExists = await _userManager.FindByEmailAsync(userRequest.Email);
+                    if (userExists != null && userExists.Email == userRequest.Email)
+                    {
+                        throw new BadRequestException("User with this email already exists");
+                    }
+
                     var user = _mapper.Map<UserCredentials>(userRequest);
 
                     var createUserResult = await _userManager.CreateAsync(
@@ -57,21 +68,41 @@ namespace AngularNetApi.Services.User
                     var addRoleResult = await _userManager.AddToRoleAsync(user, Roles.USER);
 
                     if (!addRoleResult.Succeeded)
+                    {
                         throw new ServerErrorException("Error adding role to user");
+                    }
 
                     var userProfileResult = await _userRepository.CreateAsync(userProfile);
 
                     if (userProfileResult == null)
+                    {
                         throw new ServerErrorException("Error when adding userProfile");
+                    }
 
                     await transaction.CommitAsync();
 
                     return new CreateUserResponse { Success = true, NewUserId = user.Id };
                 }
+                catch (BadRequestException ex)
+                {
+                    // Rollback in case of business rule violations
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+                catch (ServerErrorException ex)
+                {
+                    // Rollback in case of server errors
+                    await transaction.RollbackAsync();
+                    throw;
+                }
                 catch (Exception ex)
                 {
+                    // Rollback for all other unexpected errors
                     await transaction.RollbackAsync();
-                    throw new ServerErrorException("Error when creating user", ex);
+                    throw new ServerErrorException(
+                        "An unexpected error occurred during user creation.",
+                        ex
+                    );
                 }
             }
         }
