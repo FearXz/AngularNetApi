@@ -11,22 +11,22 @@ namespace AngularNetApi.Services.User
 {
     public class UserService : IUserService
     {
-        private readonly IUserRepository _userRepository;
-        private readonly ApplicationDbContext _db;
         private readonly IMapper _mapper;
+        private readonly ApplicationDbContext _db;
+        private readonly IUserRepository _userRepository;
         private readonly UserManager<ApplicationUser> _userManager;
 
         public UserService(
-            IUserRepository userRepository,
-            ApplicationDbContext db,
             IMapper mapper,
+            ApplicationDbContext db,
+            IUserRepository userRepository,
             UserManager<ApplicationUser> userManager
         )
         {
-            _userRepository = userRepository;
             _db = db;
             _mapper = mapper;
             _userManager = userManager;
+            _userRepository = userRepository;
         }
 
         public Task<UserProfile> GetByIdAsync(string userId)
