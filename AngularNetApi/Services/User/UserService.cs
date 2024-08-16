@@ -71,7 +71,7 @@ namespace AngularNetApi.Services.User
                 catch (Exception ex)
                 {
                     await transaction.RollbackAsync();
-                    throw;
+                    throw new ServerErrorException("Error when creating user", ex);
                 }
             }
         }

@@ -27,7 +27,7 @@ namespace AngularNetApi.Repository.User
             }
             catch (Exception ex)
             {
-                throw new ServerErrorException("Error when finding User");
+                throw new ServerErrorException("Error when finding User", ex);
             }
         }
 
@@ -42,7 +42,7 @@ namespace AngularNetApi.Repository.User
             }
             catch (Exception ex)
             {
-                throw new ServerErrorException("Error when creating User");
+                throw new ServerErrorException("Error when creating User", ex);
             }
         }
 
@@ -58,7 +58,7 @@ namespace AngularNetApi.Repository.User
             }
             catch (Exception ex)
             {
-                throw new ServerErrorException("Error when updating User");
+                throw new ServerErrorException("Error when updating User", ex);
             }
         }
     }

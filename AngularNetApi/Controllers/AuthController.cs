@@ -1,7 +1,9 @@
 ﻿using AngularNetApi.DTOs.Auth;
 using AngularNetApi.DTOs.User;
 using AngularNetApi.Entities;
+using AngularNetApi.Exceptions;
 using AngularNetApi.Services.Auth;
+using AngularNetApi.Services.User;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,7 +17,7 @@ namespace AngularNetApi.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly SignInManager<UserCredentials> _signInManager;
         private readonly IConfiguration _configuration;
-
+        public readonly IUserService _userSvc;
         private readonly IAuthService _authSvc;
 
         public AuthController(
@@ -23,7 +25,8 @@ namespace AngularNetApi.Controllers
             RoleManager<IdentityRole> roleManager,
             SignInManager<UserCredentials> signInManager,
             IConfiguration configuration,
-            IAuthService authService
+            IAuthService authService,
+            IUserService userService
         )
         {
             _userManager = userManager;
@@ -31,6 +34,7 @@ namespace AngularNetApi.Controllers
             _signInManager = signInManager;
             _configuration = configuration;
             _authSvc = authService;
+            _userSvc = userService;
         }
 
         [HttpPost("login")]
@@ -81,12 +85,20 @@ namespace AngularNetApi.Controllers
             }
             try
             {
-                CreateUserResponse result = await _authSvc.RegisterUser(newUser);
+                CreateUserResponse result = await _userSvc.CreateAsync(newUser);
                 return Ok(result);
+            }
+            catch (BadRequestException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (ServerErrorException ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "An unexpected error occurred." });
+                return StatusCode(500, new { message = ex.Message });
             }
         }
 
