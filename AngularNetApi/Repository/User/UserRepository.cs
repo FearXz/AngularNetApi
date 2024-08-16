@@ -25,6 +25,10 @@ namespace AngularNetApi.Repository.User
                 }
                 return user;
             }
+            catch (NotFoundException ex)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 throw new ServerErrorException("Error in UserRepository GetByIdAsync", ex);
@@ -58,11 +62,12 @@ namespace AngularNetApi.Repository.User
                     throw new NotFoundException($"User with ID {user.Id} not found.");
                 }
 
-                var updatedUser = _db.UserProfiles.Update(user);
-
+                _db.UserProfiles.Update(user);
                 await _db.SaveChangesAsync();
 
-                return updatedUser.Entity;
+                var updatedUser = await _db.UserProfiles.FindAsync(user.Id);
+
+                return updatedUser;
             }
             catch (Exception ex)
             {
