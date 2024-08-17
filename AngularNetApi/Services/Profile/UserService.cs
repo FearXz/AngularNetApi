@@ -1,5 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using AngularNetApi.Conext;
 using AngularNetApi.DTOs.User;
 using AngularNetApi.Entities;
@@ -102,7 +101,6 @@ namespace AngularNetApi.Services.User
                     var claims = new List<Claim>
                     {
                         new Claim(ClaimTypes.NameIdentifier, user.Id),
-                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                         new Claim(ClaimTypes.Role, Roles.USER),
                         new Claim(ClaimTypes.Name, userProfile.Name)
                     };

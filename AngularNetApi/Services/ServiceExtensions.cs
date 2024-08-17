@@ -2,6 +2,7 @@
 using AngularNetApi.Repository.User;
 using AngularNetApi.Services.Auth;
 using AngularNetApi.Services.User;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace AngularNetApi.Services
 {
@@ -21,6 +22,8 @@ namespace AngularNetApi.Services
             services.AddScoped<IUserService, UserService>();
 
             services.AddScoped<IAuthService, AuthService>();
+
+            services.AddSingleton<IEmailSender, EmailSender>();
 
             return services;
         }
