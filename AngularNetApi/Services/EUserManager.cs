@@ -40,20 +40,46 @@ namespace AngularNetApiAngularNetApi.Services
             _db = db;
         }
 
-        //public async Task<UserProfile> AddUserProfileAsync(UserProfile user)
-        //{
-        //    try
-        //    {
-        //        await _db.UserProfiles.AddAsync(user);
-        //        await _db.SaveChangesAsync();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new Exception(ex.Message);
-        //    }
+        public List<Claim> CreateClaims(ApplicationUser user)
+        {
+            var userRole = GetRolesAsync(user).Result[0];
 
-        //    return user;
-        //}
+            if (string.IsNullOrEmpty(userRole))
+                throw new Exception("User has no role");
+
+            if (userRole == Roles.USER || userRole == Roles.ADMIN)
+            {
+                UserProfile userProfile = (UserProfile)GetProfileAsync(user.Id).Result;
+                if (userProfile == null)
+                    throw new Exception("User has no registry");
+
+                return new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(ClaimTypes.Role, userRole),
+                    new Claim(ClaimTypes.Name, userProfile.Name)
+                };
+            }
+            else if (userRole == Roles.COMPANY)
+            {
+                CompanyProfile CompanyProfile = (CompanyProfile)GetProfileAsync(user.Id).Result;
+                if (CompanyProfile == null)
+                    throw new Exception("Company has no registry");
+
+                return new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(ClaimTypes.Role, userRole),
+                    new Claim(ClaimTypes.Name, CompanyProfile.CompanyName)
+                };
+            }
+            else
+            {
+                throw new Exception("Unknown role");
+            }
+        }
 
         public async Task<ProfileBase> GetProfileAsync(string userId)
         {
@@ -95,47 +121,6 @@ namespace AngularNetApiAngularNetApi.Services
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
-            }
-        }
-
-        public List<Claim> CreateClaims(ApplicationUser user)
-        {
-            var userRole = GetRolesAsync(user).Result[0];
-
-            if (string.IsNullOrEmpty(userRole))
-                throw new Exception("User has no role");
-
-            if (userRole == Roles.USER || userRole == Roles.ADMIN)
-            {
-                UserProfile userProfile = (UserProfile)GetProfileAsync(user.Id).Result;
-                if (userProfile == null)
-                    throw new Exception("User has no registry");
-
-                return new List<Claim>
-                {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim(ClaimTypes.Role, userRole),
-                    new Claim(ClaimTypes.Name, userProfile.Name)
-                };
-            }
-            else if (userRole == Roles.COMPANY)
-            {
-                CompanyProfile CompanyProfile = (CompanyProfile)GetProfileAsync(user.Id).Result;
-                if (CompanyProfile == null)
-                    throw new Exception("Company has no registry");
-
-                return new List<Claim>
-                {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim(ClaimTypes.Role, userRole),
-                    new Claim(ClaimTypes.Name, CompanyProfile.CompanyName)
-                };
-            }
-            else
-            {
-                throw new Exception("Unknown role");
             }
         }
 

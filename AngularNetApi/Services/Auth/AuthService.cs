@@ -6,6 +6,7 @@ using AngularNetApi.DTOs.Auth;
 using AngularNetApi.Entities;
 using AngularNetApi.Exceptions;
 using AngularNetApi.Services.Auth;
+using AngularNetApi.Util;
 using AngularNetApiAngularNetApi.Services;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
@@ -70,6 +71,14 @@ namespace AngularNetApi.Services
                 if (user == null)
                 {
                     throw new NotFoundException("User account was not found");
+                }
+                // Get user roles
+                var userRoles = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
+
+                // Throw exception if user is not in the "User" role
+                if (userRoles != Roles.USER)
+                {
+                    throw new BadRequestException("User account is not authorized.");
                 }
 
                 // Generate access token and refresh token
