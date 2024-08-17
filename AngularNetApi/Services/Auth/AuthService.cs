@@ -114,34 +114,44 @@ namespace AngularNetApi.Services
         {
             try
             {
+                // Get user ID from access token and refresh token
                 var accessTokenUserId = GetIdFromToken(refreshTokenRequest.AccessToken);
                 var refreshTokenUserId = GetIdFromToken(refreshTokenRequest.RefreshToken);
 
+                // Throw exception if refresh token user ID is null
                 if (refreshTokenUserId == null)
-                    throw new Exception("The refresh token has expired or is invalid.");
+                {
+                    throw new BadRequestException("The refresh token has expired or is invalid.");
+                }
+                // Throw exception if user ID in access token does not match user ID in refresh token
                 if (accessTokenUserId != refreshTokenUserId)
-                    throw new Exception(
+                {
+                    throw new BadRequestException(
                         "The user ID in the access token does not match the user ID in the refresh token."
                     );
-
+                }
+                // Get user by user ID
                 var user = _userManager.FindByIdAsync(accessTokenUserId).Result;
 
+                // Throw exception if user is null
                 if (user == null)
-                    throw new Exception("Invalid client request");
-
+                {
+                    throw new NotFoundException("User Not Found in AuthService Refreshtoken");
+                }
+                // Get stored refresh token
                 var storedRefreshToken = _userManager
                     .GetAuthenticationTokenAsync(user, "MyApp", "RefreshToken")
                     .Result;
-
+                // Throw exception if stored refresh token does not match refresh token in request
                 if (storedRefreshToken != refreshTokenRequest.RefreshToken)
-                    throw new Exception("Invalid refresh token");
-
+                {
+                    throw new BadRequestException("Invalid refresh token");
+                }
+                // Generate new access token and refresh token
                 var newAccessToken = GenerateToken(user);
                 var newRefreshToken = GenerateToken(user);
 
-                if (newAccessToken == null || newRefreshToken == null)
-                    throw new Exception("Error generating tokens");
-
+                // Create Identity refresh token object
                 var token = new IdentityUserToken<string>
                 {
                     UserId = user.Id,
@@ -149,16 +159,13 @@ namespace AngularNetApi.Services
                     Name = "RefreshToken",
                     Value = newRefreshToken
                 };
-
+                // Set refresh token in user's authentication tokens
                 var setRefreshTokenResponse = _userManager.SetAuthenticationTokenAsync(
                     user,
                     token.LoginProvider,
                     token.Name,
                     token.Value
                 );
-
-                if (!setRefreshTokenResponse.Result.Succeeded)
-                    throw new Exception("Error updating refresh token");
 
                 return new RefreshTokenResponse
                 {
@@ -167,8 +174,17 @@ namespace AngularNetApi.Services
                 };
             }
             catch (Exception ex)
+                when (ex is BadRequestException
+                    || ex is NotFoundException
+                    || ex is SecurityTokenException
+                    || ex is ServerErrorException
+                )
             {
-                throw new ServerErrorException(ex.Message);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new ServerErrorException("Error in AuthService RefreshToken", ex);
             }
         }
 
@@ -208,7 +224,7 @@ namespace AngularNetApi.Services
             }
             catch (Exception ex)
             {
-                throw new ServerErrorException(ex.Message);
+                throw new ServerErrorException("Error in AuthService GenerateToken", ex);
             }
         }
 
@@ -249,9 +265,13 @@ namespace AngularNetApi.Services
 
                 return principal.FindFirstValue(ClaimTypes.NameIdentifier);
             }
+            catch (SecurityTokenException ex)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
-                throw new ServerErrorException(ex.Message);
+                throw new ServerErrorException("Error in AuthService GetIdFromToken", ex);
             }
         }
     }

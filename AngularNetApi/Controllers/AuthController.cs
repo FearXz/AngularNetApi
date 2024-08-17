@@ -6,6 +6,7 @@ using AngularNetApi.Services.Auth;
 using AngularNetApi.Services.User;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace AngularNetApi.Controllers
 {
@@ -92,12 +93,38 @@ namespace AngularNetApi.Controllers
             }
             try
             {
-                RefreshTokenResponse result = await _authSvc.RefreshToken(tokens);
-                return Ok(result);
+                return Ok(await _authSvc.RefreshToken(tokens));
+            }
+            catch (BadRequestException ex)
+            {
+                return BadRequest(
+                    new { message = ex.Message, details = ex.InnerException?.Message }
+                );
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message, details = ex.InnerException?.Message });
+            }
+            catch (SecurityTokenException ex)
+            {
+                return StatusCode(
+                    423,
+                    new { message = ex.Message, details = ex.InnerException?.Message }
+                );
+            }
+            catch (ServerErrorException ex)
+            {
+                return StatusCode(
+                    500,
+                    new { message = ex.Message, details = ex.InnerException?.Message }
+                );
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode(
+                    500,
+                    new { message = ex.Message, details = ex.InnerException?.Message }
+                );
             }
         }
 
@@ -154,12 +181,12 @@ namespace AngularNetApi.Controllers
             }
 
             var result = await _userManager.AddToRoleAsync(user, role);
-            if (result.Succeeded)
+            if (!result.Succeeded)
             {
-                return Ok("Role added to user");
+                return BadRequest(result.Errors);
             }
 
-            return BadRequest(result.Errors);
+            return Ok("Role added to user");
         }
 
         [HttpPost("CreateRole")]

@@ -53,6 +53,10 @@ builder
     .AddDefaultTokenProviders()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
+//builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+//    .AddEntityFrameworkStores<ApplicationDbContext>()
+//    .AddDefaultTokenProviders();
+
 //.AddSignInManager<SignInManager<UserCredentials>>()
 //.AddApiEndpoints();
 

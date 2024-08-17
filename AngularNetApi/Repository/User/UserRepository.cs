@@ -56,12 +56,6 @@ namespace AngularNetApi.Repository.User
         {
             try
             {
-                var existingUser = await _db.Users.FindAsync(user.Id);
-                if (existingUser == null)
-                {
-                    throw new NotFoundException($"User with ID {user.Id} not found.");
-                }
-
                 _db.UserProfiles.Update(user);
                 await _db.SaveChangesAsync();
 

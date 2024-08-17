@@ -29,9 +29,22 @@ namespace AngularNetApi.Services.User
             _userRepository = userRepository;
         }
 
-        public Task<UserProfile> GetByIdAsync(string userId)
+        public async Task<UserProfile> GetByIdAsync(string userId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var user = await _userRepository.GetByIdAsync(userId);
+
+                return user;
+            }
+            catch (Exception ex) when (ex is NotFoundException || ex is ServerErrorException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new ServerErrorException("Error in UserService GetByIdAsync", ex);
+            }
         }
 
         public async Task<CreateUserResponse> CreateAsync(CreateUserRequest userRequest)
@@ -104,9 +117,28 @@ namespace AngularNetApi.Services.User
             }
         }
 
-        public Task<UserProfile> UpdateAsync(UserProfile user)
+        public async Task<UserProfile> UpdateAsync(UserProfile user)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var existingUser = await _db.Users.FindAsync(user.Id);
+                if (existingUser == null)
+                {
+                    throw new NotFoundException($"User with ID {user.Id} not found.");
+                }
+
+                var updatedProfile = await _userRepository.UpdateAsync(user);
+
+                return updatedProfile;
+            }
+            catch (Exception ex) when (ex is NotFoundException || ex is ServerErrorException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new ServerErrorException("Error in UserService UpdateAsync", ex);
+            }
         }
     }
 }
