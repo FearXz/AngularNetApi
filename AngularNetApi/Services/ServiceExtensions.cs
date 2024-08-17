@@ -2,7 +2,6 @@
 using AngularNetApi.Repository.User;
 using AngularNetApi.Services.Auth;
 using AngularNetApi.Services.User;
-using AngularNetApiAngularNetApi.Services;
 
 namespace AngularNetApi.Services
 {
@@ -18,9 +17,9 @@ namespace AngularNetApi.Services
                 cfg.AddProfile<AuthMappingProfile>();
             });
 
-            services.AddScoped<EUserManager>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserService, UserService>();
+
             services.AddScoped<IAuthService, AuthService>();
 
             return services;

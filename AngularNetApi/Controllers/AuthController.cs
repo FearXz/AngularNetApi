@@ -83,7 +83,7 @@ namespace AngularNetApi.Controllers
             }
         }
 
-        [HttpPost("RefreshToken")]
+        [HttpPost("refreshtoken")]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest tokens)
         {
             if (!ModelState.IsValid)
@@ -128,7 +128,7 @@ namespace AngularNetApi.Controllers
             }
         }
 
-        [HttpPost("registerUser")]
+        [HttpPost("registeruser")]
         public async Task<IActionResult> RegisterUser([FromBody] CreateUserRequest newUser)
         {
             if (!ModelState.IsValid)
@@ -163,7 +163,7 @@ namespace AngularNetApi.Controllers
             }
         }
 
-        [HttpPost("AddUserRole")]
+        [HttpPost("adduserrole")]
         public async Task<IActionResult> AddUserRole(string userId, string role)
         {
             var user = await _userManager.FindByIdAsync(userId);
@@ -189,7 +189,7 @@ namespace AngularNetApi.Controllers
             return Ok("Role added to user");
         }
 
-        [HttpPost("CreateRole")]
+        [HttpPost("createrole")]
         public async Task<IActionResult> CreateRole(string roleName)
         {
             if (string.IsNullOrEmpty(roleName))

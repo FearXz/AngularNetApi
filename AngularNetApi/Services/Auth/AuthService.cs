@@ -7,7 +7,6 @@ using AngularNetApi.Entities;
 using AngularNetApi.Exceptions;
 using AngularNetApi.Services.Auth;
 using AngularNetApi.Util;
-using AngularNetApiAngularNetApi.Services;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -16,7 +15,7 @@ namespace AngularNetApi.Services
 {
     public class AuthService : IAuthService
     {
-        private readonly EUserManager _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IConfiguration _configuration;
@@ -26,7 +25,7 @@ namespace AngularNetApi.Services
         private const int TokenExpirationTime = 1; // 1 hour
 
         public AuthService(
-            EUserManager userManager,
+            UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
             SignInManager<ApplicationUser> signInManager,
             IConfiguration configuration,
@@ -82,14 +81,14 @@ namespace AngularNetApi.Services
                 }
 
                 // Generate access token and refresh token
-                var accessToken = GenerateToken(user);
-                var refreshToken = GenerateToken(user);
+                var accessToken = await GenerateTokenAsync(user);
+                var refreshToken = await GenerateTokenAsync(user);
 
                 // Create Identity refresh token object
                 var token = new IdentityUserToken<string>
                 {
                     UserId = user.Id,
-                    LoginProvider = "MyApp",
+                    LoginProvider = "Take2Me",
                     Name = "RefreshToken",
                     Value = refreshToken
                 };
@@ -140,7 +139,7 @@ namespace AngularNetApi.Services
                     );
                 }
                 // Get user by user ID
-                var user = _userManager.FindByIdAsync(accessTokenUserId).Result;
+                var user = await _userManager.FindByIdAsync(accessTokenUserId);
 
                 // Throw exception if user is null
                 if (user == null)
@@ -148,23 +147,25 @@ namespace AngularNetApi.Services
                     throw new NotFoundException("User Not Found in AuthService Refreshtoken");
                 }
                 // Get stored refresh token
-                var storedRefreshToken = _userManager
-                    .GetAuthenticationTokenAsync(user, "MyApp", "RefreshToken")
-                    .Result;
+                var storedRefreshToken = await _userManager.GetAuthenticationTokenAsync(
+                    user,
+                    "Take2Me",
+                    "RefreshToken"
+                );
                 // Throw exception if stored refresh token does not match refresh token in request
                 if (storedRefreshToken != refreshTokenRequest.RefreshToken)
                 {
                     throw new BadRequestException("Invalid refresh token");
                 }
                 // Generate new access token and refresh token
-                var newAccessToken = GenerateToken(user);
-                var newRefreshToken = GenerateToken(user);
+                var newAccessToken = await GenerateTokenAsync(user);
+                var newRefreshToken = await GenerateTokenAsync(user);
 
                 // Create Identity refresh token object
                 var token = new IdentityUserToken<string>
                 {
                     UserId = user.Id,
-                    LoginProvider = "MyApp",
+                    LoginProvider = "Take2Me",
                     Name = "RefreshToken",
                     Value = newRefreshToken
                 };
@@ -207,13 +208,21 @@ namespace AngularNetApi.Services
             throw new NotImplementedException();
         }
 
-        private string GenerateToken(ApplicationUser user)
+        private async Task<string> GenerateTokenAsync(ApplicationUser user)
         {
             try
             {
                 var jwt = _configuration.GetSection("Jwt");
                 var key = Encoding.ASCII.GetBytes(jwt["Key"]);
-                var claims = _userManager.CreateClaims(user);
+                var claims = await _userManager.GetClaimsAsync(user);
+
+                // aggiungo claims jti per generare token univoci
+                claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
+
+                if (claims == null)
+                {
+                    throw new NotFoundException("User claims not found");
+                }
 
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
@@ -230,6 +239,10 @@ namespace AngularNetApi.Services
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var token = tokenHandler.CreateToken(tokenDescriptor);
                 return tokenHandler.WriteToken(token);
+            }
+            catch (NotFoundException ex)
+            {
+                throw;
             }
             catch (Exception ex)
             {

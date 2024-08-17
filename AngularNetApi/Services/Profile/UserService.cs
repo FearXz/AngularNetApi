@@ -1,4 +1,6 @@
-﻿using AngularNetApi.Conext;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using AngularNetApi.Conext;
 using AngularNetApi.DTOs.User;
 using AngularNetApi.Entities;
 using AngularNetApi.Exceptions;
@@ -87,6 +89,33 @@ namespace AngularNetApi.Services.User
 
                     // Add Role to user
                     var addRoleResult = await _userManager.AddToRoleAsync(user, Roles.USER);
+                    if (!addRoleResult.Succeeded)
+                    {
+                        var errors = string.Join(
+                            ", ",
+                            addRoleResult.Errors.Select(e => e.Description)
+                        );
+                        throw new BadRequestException($"Error when adding role: {errors}");
+                    }
+
+                    // Create claims for ApplicationUser
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.NameIdentifier, user.Id),
+                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                        new Claim(ClaimTypes.Role, Roles.USER),
+                        new Claim(ClaimTypes.Name, userProfile.Name)
+                    };
+                    // Add Claims to ApplicationUser
+                    var addClaimsResult = await _userManager.AddClaimsAsync(user, claims);
+                    if (!addClaimsResult.Succeeded)
+                    {
+                        var errors = string.Join(
+                            ", ",
+                            addClaimsResult.Errors.Select(e => e.Description)
+                        );
+                        throw new BadRequestException($"Error when adding claims: {errors}");
+                    }
 
                     // Create userProfile
                     var userProfileResult = await _userRepository.CreateAsync(userProfile);
