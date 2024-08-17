@@ -40,20 +40,20 @@ namespace AngularNetApiAngularNetApi.Services
             _db = db;
         }
 
-        public async Task<UserProfile> AddUserProfileAsync(UserProfile user)
-        {
-            try
-            {
-                await _db.UserProfiles.AddAsync(user);
-                await _db.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+        //public async Task<UserProfile> AddUserProfileAsync(UserProfile user)
+        //{
+        //    try
+        //    {
+        //        await _db.UserProfiles.AddAsync(user);
+        //        await _db.SaveChangesAsync();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception(ex.Message);
+        //    }
 
-            return user;
-        }
+        //    return user;
+        //}
 
         public async Task<ProfileBase> GetProfileAsync(string userId)
         {

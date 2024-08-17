@@ -160,7 +160,7 @@ namespace AngularNetApi.Services
                     Value = newRefreshToken
                 };
                 // Set refresh token in user's authentication tokens
-                var setRefreshTokenResponse = _userManager.SetAuthenticationTokenAsync(
+                var setRefreshTokenResponse = await _userManager.SetAuthenticationTokenAsync(
                     user,
                     token.LoginProvider,
                     token.Name,
