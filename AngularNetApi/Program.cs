@@ -1,7 +1,7 @@
 using System.Text;
-using AngularNetApi.Entities;
+using AngularNetApi.Core.Entities;
 using AngularNetApi.Infrastructure.Persistance;
-using AngularNetApi.Services;
+using AngularNetApi.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;

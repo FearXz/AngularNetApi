@@ -1,4 +1,5 @@
-﻿using AngularNetApi.Entities;
+﻿using AngularNetApi.Core.Entities;
+using AngularNetApi.Domain.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
