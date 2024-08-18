@@ -1,12 +1,15 @@
 ﻿using System.Security.Claims;
 using AngularNetApi.Conext;
 using AngularNetApi.DTOs.User;
+using AngularNetApi.Email;
+using AngularNetApi.Email.ViewModels;
 using AngularNetApi.Entities;
 using AngularNetApi.Exceptions;
 using AngularNetApi.Repository.User;
 using AngularNetApi.Util;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace AngularNetApi.Services.User
 {
@@ -16,18 +19,30 @@ namespace AngularNetApi.Services.User
         private readonly ApplicationDbContext _db;
         private readonly IUserRepository _userRepository;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IEmailSender _emailSender;
+        private readonly EmailTemplate _emailTemplate;
+        private readonly LinkGenerator _link;
+        private readonly IHttpContextAccessor _http;
 
         public UserService(
             IMapper mapper,
             ApplicationDbContext db,
             IUserRepository userRepository,
-            UserManager<ApplicationUser> userManager
+            UserManager<ApplicationUser> userManager,
+            IEmailSender emailSender,
+            EmailTemplate emailTemplate,
+            LinkGenerator linkGenerator,
+            IHttpContextAccessor http
         )
         {
             _db = db;
             _mapper = mapper;
             _userManager = userManager;
             _userRepository = userRepository;
+            _emailSender = emailSender;
+            _emailTemplate = emailTemplate;
+            _link = linkGenerator;
+            _http = http;
         }
 
         public async Task<UserProfile> GetByIdAsync(string userId)
@@ -123,6 +138,27 @@ namespace AngularNetApi.Services.User
                     {
                         throw new ServerErrorException("Error when adding userProfile");
                     }
+
+                    // Send email to user
+                    var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+                    var confirmationLink = _link.GetUriByAction(
+                        httpContext: _http.HttpContext,
+                        action: "ConfirmEmail",
+                        controller: "Auth",
+                        values: new { userId = user.Id, token }
+                    );
+
+                    string HtmlMessage = await _emailTemplate.RenderTemplateAsync(
+                        MailT.ConfirmEmailT,
+                        new ConfirmEmailVw { ConfirmationLink = confirmationLink }
+                    );
+
+                    await _emailSender.SendEmailAsync(
+                        user.Email,
+                        "Conferma registrazione",
+                        HtmlMessage
+                    );
 
                     await transaction.CommitAsync();
 

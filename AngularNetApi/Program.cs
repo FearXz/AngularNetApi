@@ -47,7 +47,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 });
 
 builder
-    .Services.AddIdentityCore<ApplicationUser>()
+    .Services.AddIdentityCore<ApplicationUser>(options =>
+    {
+        // Richiede la conferma dell'email per l'accesso
+        options.SignIn.RequireConfirmedEmail = true;
+    })
     .AddRoles<IdentityRole>()
     .AddSignInManager()
     .AddDefaultTokenProviders()

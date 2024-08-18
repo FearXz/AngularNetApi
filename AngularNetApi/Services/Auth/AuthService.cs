@@ -191,6 +191,33 @@ namespace AngularNetApi.Services
             }
         }
 
+        public async Task ConfirmEmailAsync(string userId, string token)
+        {
+            try
+            {
+                var user = await _userManager.FindByIdAsync(userId);
+                if (user == null)
+                {
+                    throw new NotFoundException("User not found");
+                }
+
+                var result = await _userManager.ConfirmEmailAsync(user, token);
+                if (!result.Succeeded)
+                {
+                    var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                    throw new BadRequestException($"Error when confirming email: {errors}");
+                }
+            }
+            catch (Exception ex) when (ex is NotFoundException || ex is BadRequestException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new ServerErrorException("Error in UserService ConfirmEmailAsync", ex);
+            }
+        }
+
         public IdentityResult AddUserRole(string userId, string role)
         {
             throw new NotImplementedException();

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using MimeKit;
 using MimeKit.Text;
 
-namespace AngularNetApi.Services
+namespace AngularNetApi.Email
 {
     public class EmailSender : IEmailSender
     {
@@ -14,7 +14,7 @@ namespace AngularNetApi.Services
             _config = configuration;
         }
 
-        public Task SendEmailAsync(string emailAddress, string subject, string htmlMessage)
+        public async Task SendEmailAsync(string emailRecipient, string subject, string htmlMessage)
         {
             try
             {
@@ -23,21 +23,20 @@ namespace AngularNetApi.Services
 
                 var email = new MimeMessage();
                 email.From.Add(MailboxAddress.Parse(Sender));
-                email.To.Add(MailboxAddress.Parse(emailAddress));
+                email.To.Add(MailboxAddress.Parse(emailRecipient));
                 email.Subject = subject;
                 email.Body = new TextPart(TextFormat.Html) { Text = htmlMessage };
                 using (var emailClient = new SmtpClient())
                 {
-                    emailClient.Connect(
+                    await emailClient.ConnectAsync(
                         "smtp.gmail.com",
                         587,
                         MailKit.Security.SecureSocketOptions.StartTls
                     );
-                    emailClient.Authenticate(Sender, Password);
-                    emailClient.Send(email);
-                    emailClient.Disconnect(true);
+                    await emailClient.AuthenticateAsync(Sender, Password);
+                    await emailClient.SendAsync(email);
+                    await emailClient.DisconnectAsync(true);
                 }
-                return Task.CompletedTask;
             }
             catch (Exception ex)
             {

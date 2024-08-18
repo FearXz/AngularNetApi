@@ -9,5 +9,6 @@ namespace AngularNetApi.Services.Auth
         public Task<RefreshTokenResponse> RefreshToken(RefreshTokenRequest refreshTokenRequest);
         public IdentityResult AddUserRole(string userId, string role);
         public IdentityResult CreateRole(string roleName);
+        public Task ConfirmEmailAsync(string userId, string token);
     }
 }

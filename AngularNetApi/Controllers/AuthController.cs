@@ -211,5 +211,27 @@ namespace AngularNetApi.Controllers
 
             return BadRequest(result.Errors);
         }
+
+        [HttpGet("ConfirmEmail")]
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError(string.Empty, "Invalid email confirmation attempt.");
+                return BadRequest(ModelState);
+            }
+            try
+            {
+                await _authSvc.ConfirmEmailAsync(userId, token);
+                return Ok("User email confirmed");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(
+                    500,
+                    new { message = ex.Message, details = ex.InnerException?.Message }
+                );
+            }
+        }
     }
 }
