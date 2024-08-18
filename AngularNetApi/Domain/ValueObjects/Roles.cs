@@ -1,4 +1,4 @@
-﻿namespace AngularNetApi.Util
+﻿namespace AngularNetApi.Domain.ValueObjects
 {
     public static class Roles
     {

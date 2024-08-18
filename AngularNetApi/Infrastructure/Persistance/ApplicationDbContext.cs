@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace AngularNetApi.Conext
+namespace AngularNetApi.Infrastructure.Persistance
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {

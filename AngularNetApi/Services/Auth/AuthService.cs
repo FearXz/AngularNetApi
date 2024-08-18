@@ -1,10 +1,10 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using AngularNetApi.Conext;
 using AngularNetApi.DTOs.Auth;
 using AngularNetApi.Entities;
 using AngularNetApi.Exceptions;
+using AngularNetApi.Infrastructure.Persistance;
 using AngularNetApi.Services.Auth;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;

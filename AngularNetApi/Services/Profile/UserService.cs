@@ -1,12 +1,12 @@
 ﻿using System.Security.Claims;
-using AngularNetApi.Conext;
+using AngularNetApi.Domain.ValueObjects;
 using AngularNetApi.DTOs.User;
 using AngularNetApi.Email;
 using AngularNetApi.Email.ViewModels;
 using AngularNetApi.Entities;
 using AngularNetApi.Exceptions;
+using AngularNetApi.Infrastructure.Persistance;
 using AngularNetApi.Repository.User;
-using AngularNetApi.Util;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;

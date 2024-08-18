@@ -1,6 +1,6 @@
-﻿using AngularNetApi.Conext;
-using AngularNetApi.Entities;
+﻿using AngularNetApi.Entities;
 using AngularNetApi.Exceptions;
+using AngularNetApi.Infrastructure.Persistance;
 
 namespace AngularNetApi.Repository.User
 {
