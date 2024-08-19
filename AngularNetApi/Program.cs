@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text;
+using AngularNetApi.API.Middlewares;
 using AngularNetApi.Core.Entities;
 using AngularNetApi.Infrastructure.Persistance;
 using AngularNetApi.Infrastructure.Services;
@@ -89,6 +90,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

@@ -2,13 +2,11 @@
 using AngularNetApi.Application.MediatR.Authentication.Login;
 using AngularNetApi.Application.MediatR.Authentication.RefreshToken;
 using AngularNetApi.Core.Entities;
-using AngularNetApi.Core.Exceptions;
 using AngularNetApi.Services.Auth;
 using AngularNetApi.Services.User;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 
 namespace AngularNetApi.API.Controllers
 {
@@ -51,41 +49,8 @@ namespace AngularNetApi.API.Controllers
                 ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                 return BadRequest(ModelState);
             }
-            try
-            {
-                return Ok(await _mediator.Send(request));
-            }
-            catch (BadRequestException ex)
-            {
-                return BadRequest(
-                    new { message = ex.Message, details = ex.InnerException?.Message }
-                );
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(new { message = ex.Message, details = ex.InnerException?.Message });
-            }
-            catch (LockedOutException ex)
-            {
-                return StatusCode(
-                    423,
-                    new { message = ex.Message, details = ex.InnerException?.Message }
-                );
-            }
-            catch (ServerErrorException ex)
-            {
-                return StatusCode(
-                    500,
-                    new { message = ex.Message, details = ex.InnerException?.Message }
-                );
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(
-                    500,
-                    new { message = ex.Message, details = ex.InnerException?.Message }
-                );
-            }
+
+            return Ok(await _mediator.Send(request));
         }
 
         [HttpPost("refreshtoken")]
@@ -96,41 +61,8 @@ namespace AngularNetApi.API.Controllers
                 ModelState.AddModelError(string.Empty, "Invalid refresh token request.");
                 return BadRequest(ModelState);
             }
-            try
-            {
-                return Ok(await _mediator.Send(request));
-            }
-            catch (BadRequestException ex)
-            {
-                return BadRequest(
-                    new { message = ex.Message, details = ex.InnerException?.Message }
-                );
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(new { message = ex.Message, details = ex.InnerException?.Message });
-            }
-            catch (SecurityTokenException ex)
-            {
-                return StatusCode(
-                    423,
-                    new { message = ex.Message, details = ex.InnerException?.Message }
-                );
-            }
-            catch (ServerErrorException ex)
-            {
-                return StatusCode(
-                    500,
-                    new { message = ex.Message, details = ex.InnerException?.Message }
-                );
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(
-                    500,
-                    new { message = ex.Message, details = ex.InnerException?.Message }
-                );
-            }
+
+            return Ok(await _mediator.Send(request));
         }
 
         [HttpGet("ConfirmEmail")]
@@ -141,18 +73,9 @@ namespace AngularNetApi.API.Controllers
                 ModelState.AddModelError(string.Empty, "Invalid email confirmation attempt.");
                 return BadRequest(ModelState);
             }
-            try
-            {
-                await _mediator.Send(new ConfirmEmailRequest { Id = Id, Token = Token });
-                return Ok("User email confirmed");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(
-                    500,
-                    new { message = ex.Message, details = ex.InnerException?.Message }
-                );
-            }
+
+            await _mediator.Send(new ConfirmEmailRequest { Id = Id, Token = Token });
+            return Ok("User email confirmed");
         }
 
         [HttpPost("createrole")]
