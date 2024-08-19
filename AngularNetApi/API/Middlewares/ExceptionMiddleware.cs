@@ -1,4 +1,6 @@
-﻿using AngularNetApi.Core.Exceptions;
+﻿using System.Security.Claims;
+using AngularNetApi.Core.Exceptions;
+using Serilog;
 
 namespace AngularNetApi.API.Middlewares
 {
@@ -20,10 +22,14 @@ namespace AngularNetApi.API.Middlewares
             }
             catch (Exception ex)
             {
+                var userId = context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "Unknown";
+
                 if (ex is ServerErrorException serverErrorEx)
                 {
                     // Log dell'eccezione specifica
-                    //Log.Error(serverErrorException, "ServerErrorException: {Message}", serverErrorException.Message);
+                    Log.Error(
+                        $"UserId: {userId} ServerErrorException: {serverErrorEx.Message} , {serverErrorEx.InnerException?.Message}"
+                    );
 
                     // Imposta il codice di stato e il contenuto della risposta
                     context.Response.StatusCode = StatusCodes.Status500InternalServerError;
@@ -36,7 +42,9 @@ namespace AngularNetApi.API.Middlewares
                 else if (ex is NotFoundException notFoundEx)
                 {
                     // Log dell'eccezione specifica
-                    //Log.Error(notFoundException, "NotFoundException: {Message}", notFoundException.Message);
+                    Log.Error(
+                        $"UserId: {userId} NotFoundException: {notFoundEx.Message}  {notFoundEx.InnerException?.Message}"
+                    );
 
                     // Imposta il codice di stato e il contenuto della risposta
                     context.Response.StatusCode = StatusCodes.Status404NotFound;
@@ -48,7 +56,9 @@ namespace AngularNetApi.API.Middlewares
                 else if (ex is BadRequestException exception)
                 {
                     // Log dell'eccezione specifica
-                    //Log.Error(validationException, "ValidationException: {Message}", validationException.Message);
+                    Log.Error(
+                        $"UserId: {userId} BadRequestException: {exception.Message}  {exception.InnerException?.Message}"
+                    );
 
                     // Imposta il codice di stato e il contenuto della risposta
                     context.Response.StatusCode = StatusCodes.Status400BadRequest;
@@ -60,7 +70,9 @@ namespace AngularNetApi.API.Middlewares
                 else if (ex is UnauthorizedException unauthorizedEx)
                 {
                     // Log dell'eccezione specifica
-                    //Log.Error(unauthorizedAccessException, "UnauthorizedAccessException: {Message}", unauthorizedAccessException.Message);
+                    Log.Error(
+                        $"UserId: {userId} UnauthorizedException: {unauthorizedEx.Message}  {unauthorizedEx.InnerException?.Message}"
+                    );
 
                     // Imposta il codice di stato e il contenuto della risposta
                     context.Response.StatusCode = StatusCodes.Status401Unauthorized;
@@ -72,7 +84,9 @@ namespace AngularNetApi.API.Middlewares
                 else if (ex is LockedOutException lockedOutEx)
                 {
                     // Log dell'eccezione specifica
-                    //Log.Error(lockedOutException, "LockedOutException: {Message}", lockedOutException.Message);
+                    Log.Error(
+                        $"UserId: {userId} LockedOutException: {lockedOutEx.Message}  {lockedOutEx.InnerException?.Message}"
+                    );
 
                     // Imposta il codice di stato e il contenuto della risposta
                     context.Response.StatusCode = StatusCodes.Status423Locked;
@@ -84,7 +98,9 @@ namespace AngularNetApi.API.Middlewares
                 else if (ex is ForbiddenException forbiddenEx)
                 {
                     // Log dell'eccezione specifica
-                    //Log.Error(forbiddenException, "ForbiddenException: {Message}", forbiddenException.Message);
+                    Log.Error(
+                        $"UserId: {userId} ForbiddenException: {forbiddenEx.Message}  {forbiddenEx.InnerException?.Message}"
+                    );
 
                     // Imposta il codice di stato e il contenuto della risposta
                     context.Response.StatusCode = StatusCodes.Status403Forbidden;
@@ -96,7 +112,9 @@ namespace AngularNetApi.API.Middlewares
                 else
                 {
                     // Log dell'eccezione generica
-                    //Log.Error(ex, "Si è verificato un errore durante l'elaborazione della richiesta.");
+                    Log.Error(
+                        $"UserId: {userId} Exception: {ex.Message}  {ex.InnerException?.Message}"
+                    );
 
                     // Imposta il codice di stato e il contenuto della risposta
                     context.Response.StatusCode = StatusCodes.Status500InternalServerError;

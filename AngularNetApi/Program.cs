@@ -7,6 +7,7 @@ using AngularNetApi.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -81,6 +82,16 @@ builder.Services.AddCors(options =>
         }
     );
 });
+
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Error() // Logga errori e superiori
+    .WriteTo.Console() // Opzionale: scrive anche sulla console
+    .WriteTo.File("logs/error-log.txt", rollingInterval: RollingInterval.Day) // Scrive su file
+    .CreateLogger();
+
+// Imposta Serilog come il provider di log
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog();
 
 var app = builder.Build();
 
