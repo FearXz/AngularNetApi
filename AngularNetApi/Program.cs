@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text;
 using AngularNetApi.Core.Entities;
 using AngularNetApi.Infrastructure.Persistance;
@@ -7,6 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Register the MediatR services
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly())
+);
 
 // Register all services
 builder.Services.RegisterAllServices(builder.Configuration);

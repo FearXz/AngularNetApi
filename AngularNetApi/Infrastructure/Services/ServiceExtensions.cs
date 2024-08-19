@@ -21,8 +21,6 @@ namespace AngularNetApi.Infrastructure.Services
                 cfg.AddProfile<AuthMappingProfile>();
             });
 
-            //     services.AddScoped<IUrlHelper, UrlHelper>();
-
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddSingleton<EmailTemplate>();
 

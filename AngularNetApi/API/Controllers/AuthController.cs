@@ -1,9 +1,11 @@
-﻿using AngularNetApi.API.Models.Auth;
-using AngularNetApi.API.Models.Profile;
+﻿using AngularNetApi.API.Models.Profile;
+using AngularNetApi.Application.MediatR.Authentication.Login;
+using AngularNetApi.Application.MediatR.Authentication.RefreshToken;
 using AngularNetApi.Core.Entities;
 using AngularNetApi.Core.Exceptions;
 using AngularNetApi.Services.Auth;
 using AngularNetApi.Services.User;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -20,6 +22,7 @@ namespace AngularNetApi.API.Controllers
         private readonly IConfiguration _configuration;
         public readonly IUserService _userSvc;
         private readonly IAuthService _authSvc;
+        private readonly IMediator _mediator;
 
         public AuthController(
             UserManager<ApplicationUser> userManager,
@@ -27,7 +30,8 @@ namespace AngularNetApi.API.Controllers
             SignInManager<ApplicationUser> signInManager,
             IConfiguration configuration,
             IAuthService authService,
-            IUserService userService
+            IUserService userService,
+            IMediator mediator
         )
         {
             _userManager = userManager;
@@ -36,6 +40,7 @@ namespace AngularNetApi.API.Controllers
             _configuration = configuration;
             _authSvc = authService;
             _userSvc = userService;
+            _mediator = mediator;
         }
 
         [HttpPost("login")]
@@ -48,7 +53,7 @@ namespace AngularNetApi.API.Controllers
             }
             try
             {
-                return Ok(await _authSvc.Login(login));
+                return Ok(await _mediator.Send(login));
             }
             catch (BadRequestException ex)
             {
@@ -161,32 +166,6 @@ namespace AngularNetApi.API.Controllers
                     new { message = ex.Message, details = ex.InnerException?.Message }
                 );
             }
-        }
-
-        [HttpPost("adduserrole")]
-        public async Task<IActionResult> AddUserRole(string userId, string role)
-        {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
-            {
-                return NotFound("User not found");
-            }
-
-            // prima rimuovo tutti i ruoli
-            var userRoles = await _userManager.GetRolesAsync(user);
-            var resultRemove = await _userManager.RemoveFromRolesAsync(user, userRoles);
-            if (!resultRemove.Succeeded)
-            {
-                return BadRequest(resultRemove.Errors);
-            }
-
-            var result = await _userManager.AddToRoleAsync(user, role);
-            if (!result.Succeeded)
-            {
-                return BadRequest(result.Errors);
-            }
-
-            return Ok("Role added to user");
         }
 
         [HttpPost("createrole")]

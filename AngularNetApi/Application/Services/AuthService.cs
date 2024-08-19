@@ -1,10 +1,10 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using AngularNetApi.API.Models.Auth;
+using AngularNetApi.Application.MediatR.Authentication.Login;
+using AngularNetApi.Application.MediatR.Authentication.RefreshToken;
 using AngularNetApi.Core.Entities;
 using AngularNetApi.Core.Exceptions;
-using AngularNetApi.DTOs.Auth;
 using AngularNetApi.Infrastructure.Persistance;
 using AngularNetApi.Services.Auth;
 using AutoMapper;
@@ -43,179 +43,137 @@ namespace AngularNetApi.Application.Services
 
         public async Task<LoginResponse> Login(LoginRequest login)
         {
-            try
+            // Attempt to sign in the user
+            var result = await _signInManager.PasswordSignInAsync(
+                login.Email,
+                login.Password,
+                true,
+                lockoutOnFailure: false
+            );
+            // Throw exception if sign in fails
+            if (!result.Succeeded)
             {
-                // Attempt to sign in the user
-                var result = await _signInManager.PasswordSignInAsync(
-                    login.Email,
-                    login.Password,
-                    true,
-                    lockoutOnFailure: false
-                );
-                // Throw exception if sign in fails
-                if (!result.Succeeded)
-                {
-                    throw new BadRequestException("Invalid credentials");
-                }
-                // Throw exception if user is locked out
-                if (result.IsLockedOut)
-                {
-                    throw new LockedOutException("User account is locked out.");
-                }
-
-                // Get user by email
-                var user = await _userManager.FindByEmailAsync(login.Email);
-
-                // Throw exception if user is null
-                if (user == null)
-                {
-                    throw new NotFoundException("User account was not found");
-                }
-                // Get user roles
-                var userRoles = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
-
-                // Generate access token and refresh token
-                var accessToken = await GenerateTokenAsync(user);
-                var refreshToken = await GenerateTokenAsync(user);
-
-                // Create Identity refresh token object
-                var token = new IdentityUserToken<string>
-                {
-                    UserId = user.Id,
-                    LoginProvider = "Take2Me",
-                    Name = "RefreshToken",
-                    Value = refreshToken
-                };
-
-                // Set refresh token in user's authentication tokens
-                await _userManager.SetAuthenticationTokenAsync(
-                    user,
-                    token.LoginProvider,
-                    token.Name,
-                    token.Value
-                );
-                return new LoginResponse { AccessToken = accessToken, RefreshToken = refreshToken };
+                throw new BadRequestException("Invalid credentials");
             }
-            catch (Exception ex)
-                when (ex is BadRequestException
-                    || ex is LockedOutException
-                    || ex is NotFoundException
-                )
+            // Throw exception if user is locked out
+            if (result.IsLockedOut)
             {
-                throw;
+                throw new LockedOutException("User account is locked out.");
             }
-            catch (Exception ex)
+
+            // Get user by email
+            var user = await _userManager.FindByEmailAsync(login.Email);
+
+            // Throw exception if user is null
+            if (user == null)
             {
-                throw new ServerErrorException("An unexpected error occurred during login.", ex);
+                throw new NotFoundException("User account was not found");
             }
+            // Get user roles
+            var userRoles = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
+
+            // Generate access token and refresh token
+            var accessToken = await GenerateTokenAsync(user);
+            var refreshToken = await GenerateTokenAsync(user);
+
+            // Create Identity refresh token object
+            var token = new IdentityUserToken<string>
+            {
+                UserId = user.Id,
+                LoginProvider = "Take2Me",
+                Name = "RefreshToken",
+                Value = refreshToken
+            };
+
+            // Set refresh token in user's authentication tokens
+            await _userManager.SetAuthenticationTokenAsync(
+                user,
+                token.LoginProvider,
+                token.Name,
+                token.Value
+            );
+            return new LoginResponse { AccessToken = accessToken, RefreshToken = refreshToken };
         }
 
         public async Task<RefreshTokenResponse> RefreshToken(
             RefreshTokenRequest refreshTokenRequest
         )
         {
-            try
+            // Get user ID from access token and refresh token
+            var accessTokenUserId = GetIdFromToken(refreshTokenRequest.AccessToken);
+            var refreshTokenUserId = GetIdFromToken(refreshTokenRequest.RefreshToken);
+
+            // Throw exception if refresh token user ID is null
+            if (refreshTokenUserId == null)
             {
-                // Get user ID from access token and refresh token
-                var accessTokenUserId = GetIdFromToken(refreshTokenRequest.AccessToken);
-                var refreshTokenUserId = GetIdFromToken(refreshTokenRequest.RefreshToken);
-
-                // Throw exception if refresh token user ID is null
-                if (refreshTokenUserId == null)
-                {
-                    throw new BadRequestException("The refresh token has expired or is invalid.");
-                }
-                // Throw exception if user ID in access token does not match user ID in refresh token
-                if (accessTokenUserId != refreshTokenUserId)
-                {
-                    throw new BadRequestException(
-                        "The user ID in the access token does not match the user ID in the refresh token."
-                    );
-                }
-                // Get user by user ID
-                var user = await _userManager.FindByIdAsync(accessTokenUserId);
-
-                // Throw exception if user is null
-                if (user == null)
-                {
-                    throw new NotFoundException("User Not Found in AuthService Refreshtoken");
-                }
-                // Get stored refresh token
-                var storedRefreshToken = await _userManager.GetAuthenticationTokenAsync(
-                    user,
-                    "Take2Me",
-                    "RefreshToken"
+                throw new BadRequestException("The refresh token has expired or is invalid.");
+            }
+            // Throw exception if user ID in access token does not match user ID in refresh token
+            if (accessTokenUserId != refreshTokenUserId)
+            {
+                throw new BadRequestException(
+                    "The user ID in the access token does not match the user ID in the refresh token."
                 );
-                // Throw exception if stored refresh token does not match refresh token in request
-                if (storedRefreshToken != refreshTokenRequest.RefreshToken)
-                {
-                    throw new BadRequestException("Invalid refresh token");
-                }
-                // Generate new access token and refresh token
-                var newAccessToken = await GenerateTokenAsync(user);
-                var newRefreshToken = await GenerateTokenAsync(user);
+            }
+            // Get user by user ID
+            var user = await _userManager.FindByIdAsync(accessTokenUserId);
 
-                // Create Identity refresh token object
-                var token = new IdentityUserToken<string>
-                {
-                    UserId = user.Id,
-                    LoginProvider = "Take2Me",
-                    Name = "RefreshToken",
-                    Value = newRefreshToken
-                };
-                // Set refresh token in user's authentication tokens
-                var setRefreshTokenResponse = await _userManager.SetAuthenticationTokenAsync(
-                    user,
-                    token.LoginProvider,
-                    token.Name,
-                    token.Value
-                );
+            // Throw exception if user is null
+            if (user == null)
+            {
+                throw new NotFoundException("User Not Found in AuthService Refreshtoken");
+            }
+            // Get stored refresh token
+            var storedRefreshToken = await _userManager.GetAuthenticationTokenAsync(
+                user,
+                "Take2Me",
+                "RefreshToken"
+            );
+            // Throw exception if stored refresh token does not match refresh token in request
+            if (storedRefreshToken != refreshTokenRequest.RefreshToken)
+            {
+                throw new BadRequestException("Invalid refresh token");
+            }
+            // Generate new access token and refresh token
+            var newAccessToken = await GenerateTokenAsync(user);
+            var newRefreshToken = await GenerateTokenAsync(user);
 
-                return new RefreshTokenResponse
-                {
-                    AccessToken = newAccessToken,
-                    RefreshToken = newRefreshToken
-                };
-            }
-            catch (Exception ex)
-                when (ex is BadRequestException
-                    || ex is NotFoundException
-                    || ex is SecurityTokenException
-                    || ex is ServerErrorException
-                )
+            // Create Identity refresh token object
+            var token = new IdentityUserToken<string>
             {
-                throw;
-            }
-            catch (Exception ex)
+                UserId = user.Id,
+                LoginProvider = "Take2Me",
+                Name = "RefreshToken",
+                Value = newRefreshToken
+            };
+            // Set refresh token in user's authentication tokens
+            var setRefreshTokenResponse = await _userManager.SetAuthenticationTokenAsync(
+                user,
+                token.LoginProvider,
+                token.Name,
+                token.Value
+            );
+
+            return new RefreshTokenResponse
             {
-                throw new ServerErrorException("Error in AuthService RefreshToken", ex);
-            }
+                AccessToken = newAccessToken,
+                RefreshToken = newRefreshToken
+            };
         }
 
         public async Task ConfirmEmailAsync(string userId, string token)
         {
-            try
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
             {
-                var user = await _userManager.FindByIdAsync(userId);
-                if (user == null)
-                {
-                    throw new NotFoundException("User not found");
-                }
+                throw new NotFoundException("User not found");
+            }
 
-                var result = await _userManager.ConfirmEmailAsync(user, token);
-                if (!result.Succeeded)
-                {
-                    var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-                    throw new BadRequestException($"Error when confirming email: {errors}");
-                }
-            }
-            catch (Exception ex) when (ex is NotFoundException || ex is BadRequestException)
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+            if (!result.Succeeded)
             {
-                throw;
-            }
-            catch (Exception ex)
-            {
-                throw new ServerErrorException("Error in UserService ConfirmEmailAsync", ex);
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                throw new BadRequestException($"Error when confirming email: {errors}");
             }
         }
 
@@ -231,91 +189,69 @@ namespace AngularNetApi.Application.Services
 
         private async Task<string> GenerateTokenAsync(ApplicationUser user)
         {
-            try
+            var jwt = _configuration.GetSection("Jwt");
+            var key = Encoding.ASCII.GetBytes(jwt["Key"]);
+            var claims = await _userManager.GetClaimsAsync(user);
+
+            // aggiungo claims jti per generare token univoci
+            claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
+
+            if (claims == null)
             {
-                var jwt = _configuration.GetSection("Jwt");
-                var key = Encoding.ASCII.GetBytes(jwt["Key"]);
-                var claims = await _userManager.GetClaimsAsync(user);
-
-                // aggiungo claims jti per generare token univoci
-                claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
-
-                if (claims == null)
-                {
-                    throw new NotFoundException("User claims not found");
-                }
-
-                var tokenDescriptor = new SecurityTokenDescriptor
-                {
-                    Subject = new ClaimsIdentity(claims),
-                    Expires = DateTime.UtcNow.AddHours(TokenExpirationTime),
-                    SigningCredentials = new SigningCredentials(
-                        new SymmetricSecurityKey(key),
-                        SecurityAlgorithms.HmacSha256Signature
-                    ),
-                    Issuer = jwt["Issuer"],
-                    Audience = jwt["Audience"]
-                };
-
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var token = tokenHandler.CreateToken(tokenDescriptor);
-                return tokenHandler.WriteToken(token);
+                throw new NotFoundException("User claims not found");
             }
-            catch (NotFoundException ex)
+
+            var tokenDescriptor = new SecurityTokenDescriptor
             {
-                throw;
-            }
-            catch (Exception ex)
-            {
-                throw new ServerErrorException("Error in AuthService GenerateToken", ex);
-            }
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.UtcNow.AddHours(TokenExpirationTime),
+                SigningCredentials = new SigningCredentials(
+                    new SymmetricSecurityKey(key),
+                    SecurityAlgorithms.HmacSha256Signature
+                ),
+                Issuer = jwt["Issuer"],
+                Audience = jwt["Audience"]
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
         }
 
         private string GetIdFromToken(string token)
         {
-            try
+            var tokenValidationParameters = new TokenValidationParameters
             {
-                var tokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateAudience = false,
-                    ValidateIssuer = false,
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(_configuration["Jwt:Key"])
-                    ),
-                    ValidateLifetime = false // Non validare la scadenza del token
-                };
+                ValidateAudience = false,
+                ValidateIssuer = false,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(_configuration["Jwt:Key"])
+                ),
+                ValidateLifetime = false // Non validare la scadenza del token
+            };
 
-                var tokenHandler = new JwtSecurityTokenHandler();
+            var tokenHandler = new JwtSecurityTokenHandler();
 
-                var principal = tokenHandler.ValidateToken(
-                    token,
-                    tokenValidationParameters,
-                    out SecurityToken securityToken
-                );
-                var jwtSecurityToken = securityToken as JwtSecurityToken;
+            var principal = tokenHandler.ValidateToken(
+                token,
+                tokenValidationParameters,
+                out SecurityToken securityToken
+            );
+            var jwtSecurityToken = securityToken as JwtSecurityToken;
 
-                if (
-                    jwtSecurityToken == null
-                    || !jwtSecurityToken.Header.Alg.Equals(
-                        SecurityAlgorithms.HmacSha256,
-                        StringComparison.InvariantCultureIgnoreCase
-                    )
+            if (
+                jwtSecurityToken == null
+                || !jwtSecurityToken.Header.Alg.Equals(
+                    SecurityAlgorithms.HmacSha256,
+                    StringComparison.InvariantCultureIgnoreCase
                 )
-                {
-                    throw new SecurityTokenException("Invalid token");
-                }
+            )
+            {
+                throw new SecurityTokenException("Invalid token");
+            }
 
-                return principal.FindFirstValue(ClaimTypes.NameIdentifier);
-            }
-            catch (SecurityTokenException ex)
-            {
-                throw;
-            }
-            catch (Exception ex)
-            {
-                throw new ServerErrorException("Error in AuthService GetIdFromToken", ex);
-            }
+            return principal.FindFirstValue(ClaimTypes.NameIdentifier);
         }
     }
 }

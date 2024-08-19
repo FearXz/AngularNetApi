@@ -1,6 +1,6 @@
-﻿namespace AngularNetApi.API.Models.Auth
+﻿namespace AngularNetApi.Application.MediatR.Authentication.Login
 {
-    public class RefreshTokenRequest
+    public class LoginResponse
     {
         public string AccessToken { get; set; }
         public string RefreshToken { get; set; }

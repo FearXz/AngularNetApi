@@ -33,8 +33,12 @@
   <ItemGroup>
     <Folder Include="API\Filters\" />
     <Folder Include="API\Middlewares\" />
-    <Folder Include="Application\Commands\" />
-    <Folder Include="Application\Queries\" />
+    <Folder Include="Application\MediatR\StoreManagement\" />
+    <Folder Include="Application\MediatR\AuditLog\" />
+    <Folder Include="Application\MediatR\OrderProcessing\" />
+    <Folder Include="Application\MediatR\Notification\" />
+    <Folder Include="Application\MediatR\AccountManagement\" />
+    <Folder Include="Application\MediatR\OrderOps\" />
     <Folder Include="Migrations\" />
     <Folder Include="Test\" />
   </ItemGroup>

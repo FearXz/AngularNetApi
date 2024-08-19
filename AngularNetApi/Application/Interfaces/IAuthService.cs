@@ -1,5 +1,5 @@
-﻿using AngularNetApi.API.Models.Auth;
-using AngularNetApi.DTOs.Auth;
+﻿using AngularNetApi.Application.MediatR.Authentication.Login;
+using AngularNetApi.Application.MediatR.Authentication.RefreshToken;
 using Microsoft.AspNetCore.Identity;
 
 namespace AngularNetApi.Services.Auth
