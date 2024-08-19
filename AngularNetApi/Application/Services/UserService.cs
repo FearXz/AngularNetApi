@@ -123,13 +123,13 @@ namespace AngularNetApi.Application.Services
                 }
 
                 // Send email to user
-                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var Token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
                 var confirmationLink = _link.GetUriByAction(
                     httpContext: _http.HttpContext,
                     action: "ConfirmEmail",
                     controller: "Auth",
-                    values: new { userId = user.Id, token }
+                    values: new { user.Id, Token }
                 );
 
                 string HtmlMessage = await _emailTemplate.RenderTemplateAsync(

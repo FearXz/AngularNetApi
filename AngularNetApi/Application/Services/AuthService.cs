@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using AngularNetApi.Application.MediatR.Authentication.ConfirmEmail;
 using AngularNetApi.Application.MediatR.Authentication.Login;
 using AngularNetApi.Application.MediatR.Authentication.RefreshToken;
 using AngularNetApi.Core.Entities;
@@ -161,20 +162,21 @@ namespace AngularNetApi.Application.Services
             };
         }
 
-        public async Task ConfirmEmailAsync(string userId, string token)
+        public async Task<ConfirmEmailResponse> ConfirmEmailAsync(ConfirmEmailRequest request)
         {
-            var user = await _userManager.FindByIdAsync(userId);
+            var user = await _userManager.FindByIdAsync(request.Id);
             if (user == null)
             {
                 throw new NotFoundException("User not found");
             }
 
-            var result = await _userManager.ConfirmEmailAsync(user, token);
+            var result = await _userManager.ConfirmEmailAsync(user, request.Token);
             if (!result.Succeeded)
             {
                 var errors = string.Join(", ", result.Errors.Select(e => e.Description));
                 throw new BadRequestException($"Error when confirming email: {errors}");
             }
+            return new ConfirmEmailResponse { Id = request.Id, Email = user.Email };
         }
 
         public IdentityResult AddUserRole(string userId, string role)

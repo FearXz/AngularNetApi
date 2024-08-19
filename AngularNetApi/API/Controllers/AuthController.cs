@@ -1,4 +1,5 @@
-﻿using AngularNetApi.Application.MediatR.Authentication.Login;
+﻿using AngularNetApi.Application.MediatR.Authentication.ConfirmEmail;
+using AngularNetApi.Application.MediatR.Authentication.Login;
 using AngularNetApi.Application.MediatR.Authentication.RefreshToken;
 using AngularNetApi.Application.MediatR.ProfileManagement.User.CreateUser;
 using AngularNetApi.Core.Entities;
@@ -44,7 +45,7 @@ namespace AngularNetApi.API.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequest login)
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -53,7 +54,7 @@ namespace AngularNetApi.API.Controllers
             }
             try
             {
-                return Ok(await _mediator.Send(login));
+                return Ok(await _mediator.Send(request));
             }
             catch (BadRequestException ex)
             {
@@ -89,7 +90,7 @@ namespace AngularNetApi.API.Controllers
         }
 
         [HttpPost("refreshtoken")]
-        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest tokens)
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -98,7 +99,7 @@ namespace AngularNetApi.API.Controllers
             }
             try
             {
-                return Ok(await _authSvc.RefreshToken(tokens));
+                return Ok(await _mediator.Send(request));
             }
             catch (BadRequestException ex)
             {
@@ -134,7 +135,7 @@ namespace AngularNetApi.API.Controllers
         }
 
         [HttpPost("registeruser")]
-        public async Task<IActionResult> RegisterUser([FromBody] CreateUserRequest newUser)
+        public async Task<IActionResult> RegisterUser([FromBody] CreateUserRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -143,7 +144,7 @@ namespace AngularNetApi.API.Controllers
             }
             try
             {
-                return Ok(await _userSvc.CreateAsync(newUser));
+                return Ok(await _mediator.Send(request));
             }
             catch (BadRequestException ex)
             {
@@ -192,7 +193,7 @@ namespace AngularNetApi.API.Controllers
         }
 
         [HttpGet("ConfirmEmail")]
-        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        public async Task<IActionResult> ConfirmEmail(string Id, string Token)
         {
             if (!ModelState.IsValid)
             {
@@ -201,7 +202,7 @@ namespace AngularNetApi.API.Controllers
             }
             try
             {
-                await _authSvc.ConfirmEmailAsync(userId, token);
+                await _mediator.Send(new ConfirmEmailRequest { Id = Id, Token = Token });
                 return Ok("User email confirmed");
             }
             catch (Exception ex)

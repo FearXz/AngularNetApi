@@ -1,6 +1,8 @@
-﻿namespace AngularNetApi.Application.MediatR.ProfileManagement.User.CreateUser
+﻿using MediatR;
+
+namespace AngularNetApi.Application.MediatR.ProfileManagement.User.CreateUser
 {
-    public class CreateUserRequest
+    public class CreateUserRequest : IRequest<UserData>
     {
         public string Email { get; set; }
         public string Password { get; set; }
