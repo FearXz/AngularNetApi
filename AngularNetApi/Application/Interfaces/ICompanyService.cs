@@ -1,6 +1,5 @@
-﻿using AngularNetApi.API.Models.Profile;
+﻿using AngularNetApi.Application.MediatR.ProfileManagement.User.CreateUser;
 using AngularNetApi.Core.Entities;
-using AngularNetApi.DTOs.User;
 
 namespace AngularNetApi.Application.Interfaces
 {

@@ -1,18 +1,19 @@
-﻿using AngularNetApi.API.Models.Profile;
+﻿using AngularNetApi.Application.MediatR.ProfileManagement.User.CreateUser;
 using AngularNetApi.Core.Entities;
 using AutoMapper;
 
 namespace AngularNetApi.Application.Mapping
 {
-    public class AuthMappingProfile : Profile
+    public class MappingProfile : Profile
     {
-        public AuthMappingProfile()
+        public MappingProfile()
         {
+            // Create a mapping from CreateUserRequest to UserProfile
+            CreateMap<CreateUserRequest, UserProfile>();
+            // Create a mapping from CreateUserRequest to ApplicationUser
             CreateMap<CreateUserRequest, ApplicationUser>()
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));
-
-            CreateMap<CreateUserRequest, UserProfile>();
         }
     }
 }

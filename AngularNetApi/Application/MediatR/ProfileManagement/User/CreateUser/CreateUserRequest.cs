@@ -1,4 +1,4 @@
-﻿namespace AngularNetApi.API.Models.Profile
+﻿namespace AngularNetApi.Application.MediatR.ProfileManagement.User.CreateUser
 {
     public class CreateUserRequest
     {

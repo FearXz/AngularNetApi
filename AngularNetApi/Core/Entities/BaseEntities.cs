@@ -1,17 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AngularNetApi.Core.Entities
 {
-    public abstract class ProfileBase
+    public abstract class BaseEntities
     {
-        [Key]
-        public int Id { get; set; }
-
-        [Required]
-        [ForeignKey("ApplicationUser")]
-        public string ApplicationUserId { get; set; }
-
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 

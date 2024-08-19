@@ -1,9 +1,9 @@
 ﻿using System.Security.Claims;
-using AngularNetApi.API.Models.Profile;
+using AngularNetApi.Application.MediatR.ProfileManagement.User;
+using AngularNetApi.Application.MediatR.ProfileManagement.User.CreateUser;
 using AngularNetApi.Core.Entities;
 using AngularNetApi.Core.Exceptions;
 using AngularNetApi.Core.ValueObjects;
-using AngularNetApi.DTOs.User;
 using AngularNetApi.Infrastructure.Interfaces;
 using AngularNetApi.Infrastructure.Persistance;
 using AngularNetApi.Infrastructure.Services.Email;
@@ -47,14 +47,14 @@ namespace AngularNetApi.Application.Services
             _http = http;
         }
 
-        public async Task<UserProfile> GetByIdAsync(string userId)
+        public async Task<UserData> GetByIdAsync(string userId)
         {
             var user = await _userRepository.GetByIdAsync(userId);
 
             return user;
         }
 
-        public async Task<CreateUserResponse> CreateAsync(CreateUserRequest userRequest)
+        public async Task<UserData> CreateAsync(CreateUserRequest userRequest)
         {
             using (var transaction = await _db.Database.BeginTransactionAsync())
             {
@@ -114,10 +114,10 @@ namespace AngularNetApi.Application.Services
                 }
 
                 // Create userProfile
-                var userProfileResult = await _userRepository.CreateAsync(userProfile);
+                var userData = await _userRepository.CreateAsync(userProfile);
 
                 // Throw ServerErrorException if userProfile was not created
-                if (userProfileResult == null)
+                if (userData == null)
                 {
                     throw new ServerErrorException("Error when adding userProfile");
                 }
@@ -145,21 +145,14 @@ namespace AngularNetApi.Application.Services
 
                 await transaction.CommitAsync();
 
-                return new CreateUserResponse { Success = true, NewUserId = user.Id };
+                return userData;
             }
         }
 
-        public async Task<UserProfile> UpdateAsync(UserProfile user)
+        // roba a caso non è fatto , non usare
+        public async Task<UserData> UpdateAsync(UserProfile user)
         {
-            var existingUser = await _db.Users.FindAsync(user.Id);
-            if (existingUser == null)
-            {
-                throw new NotFoundException($"User with ID {user.Id} not found.");
-            }
-
-            var updatedProfile = await _userRepository.UpdateAsync(user);
-
-            return updatedProfile;
+            throw new NotImplementedException();
         }
     }
 }

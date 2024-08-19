@@ -1,13 +1,13 @@
-﻿using AngularNetApi.API.Models.Profile;
+﻿using AngularNetApi.Application.MediatR.ProfileManagement.User;
+using AngularNetApi.Application.MediatR.ProfileManagement.User.CreateUser;
 using AngularNetApi.Core.Entities;
-using AngularNetApi.DTOs.User;
 
 namespace AngularNetApi.Services.User
 {
     public interface IUserService
     {
-        Task<UserProfile> GetByIdAsync(string userId);
-        Task<CreateUserResponse> CreateAsync(CreateUserRequest user);
-        Task<UserProfile> UpdateAsync(UserProfile user);
+        Task<UserData> GetByIdAsync(string userId);
+        Task<UserData> CreateAsync(CreateUserRequest user);
+        Task<UserData> UpdateAsync(UserProfile user);
     }
 }

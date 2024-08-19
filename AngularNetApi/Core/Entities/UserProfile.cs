@@ -1,9 +1,17 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AngularNetApi.Core.Entities
 {
-    public class UserProfile : ProfileBase
+    public class UserProfile : BaseEntities
     {
+        [Key]
+        public int UserProfileId { get; set; }
+
+        [Required]
+        [ForeignKey("ApplicationUser")]
+        public string ApplicationUserId { get; set; }
+
         [Required]
         public string Name { get; set; }
 
@@ -22,7 +30,7 @@ namespace AngularNetApi.Core.Entities
         [Required]
         public string MobileNumber { get; set; }
 
-        // Navigation property
+        // Navigation Property
 
         public virtual ApplicationUser ApplicationUser { get; set; }
     }

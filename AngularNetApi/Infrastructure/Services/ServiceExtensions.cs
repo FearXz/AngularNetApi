@@ -18,7 +18,7 @@ namespace AngularNetApi.Infrastructure.Services
         {
             services.AddAutoMapper(cfg =>
             {
-                cfg.AddProfile<AuthMappingProfile>();
+                cfg.AddProfile<MappingProfile>();
             });
 
             services.AddTransient<IEmailSender, EmailSender>();

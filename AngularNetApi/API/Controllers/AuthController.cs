@@ -1,6 +1,6 @@
-﻿using AngularNetApi.API.Models.Profile;
-using AngularNetApi.Application.MediatR.Authentication.Login;
+﻿using AngularNetApi.Application.MediatR.Authentication.Login;
 using AngularNetApi.Application.MediatR.Authentication.RefreshToken;
+using AngularNetApi.Application.MediatR.ProfileManagement.User.CreateUser;
 using AngularNetApi.Core.Entities;
 using AngularNetApi.Core.Exceptions;
 using AngularNetApi.Services.Auth;
