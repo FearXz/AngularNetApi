@@ -33,7 +33,7 @@
   <ItemGroup>
     <Folder Include="API\Filters\" />
     <Folder Include="API\Middlewares\" />
-    <Folder Include="API\Models\Profile\" />
+    <Folder Include="API\Models\" />
     <Folder Include="Application\MediatR\StoreManagement\" />
     <Folder Include="Application\MediatR\AuditLog\" />
     <Folder Include="Application\MediatR\OrderProcessing\" />

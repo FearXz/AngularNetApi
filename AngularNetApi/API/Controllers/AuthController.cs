@@ -1,7 +1,6 @@
 ﻿using AngularNetApi.Application.MediatR.Authentication.ConfirmEmail;
 using AngularNetApi.Application.MediatR.Authentication.Login;
 using AngularNetApi.Application.MediatR.Authentication.RefreshToken;
-using AngularNetApi.Application.MediatR.ProfileManagement.User.CreateUser;
 using AngularNetApi.Core.Entities;
 using AngularNetApi.Core.Exceptions;
 using AngularNetApi.Services.Auth;
@@ -134,31 +133,18 @@ namespace AngularNetApi.API.Controllers
             }
         }
 
-        [HttpPost("registeruser")]
-        public async Task<IActionResult> RegisterUser([FromBody] CreateUserRequest request)
+        [HttpGet("ConfirmEmail")]
+        public async Task<IActionResult> ConfirmEmail(string Id, string Token)
         {
             if (!ModelState.IsValid)
             {
-                ModelState.AddModelError(string.Empty, "Invalid registration attempt.");
+                ModelState.AddModelError(string.Empty, "Invalid email confirmation attempt.");
                 return BadRequest(ModelState);
             }
             try
             {
-                return Ok(await _mediator.Send(request));
-            }
-            catch (BadRequestException ex)
-            {
-                return BadRequest(
-                    new { message = ex.Message, details = ex.InnerException?.Message }
-                );
-            }
-            catch (ServerErrorException ex)
-            {
-                // Gestione delle eccezioni generiche del server
-                return StatusCode(
-                    500,
-                    new { message = ex.Message, details = ex.InnerException?.Message }
-                );
+                await _mediator.Send(new ConfirmEmailRequest { Id = Id, Token = Token });
+                return Ok("User email confirmed");
             }
             catch (Exception ex)
             {
@@ -190,28 +176,6 @@ namespace AngularNetApi.API.Controllers
             }
 
             return BadRequest(result.Errors);
-        }
-
-        [HttpGet("ConfirmEmail")]
-        public async Task<IActionResult> ConfirmEmail(string Id, string Token)
-        {
-            if (!ModelState.IsValid)
-            {
-                ModelState.AddModelError(string.Empty, "Invalid email confirmation attempt.");
-                return BadRequest(ModelState);
-            }
-            try
-            {
-                await _mediator.Send(new ConfirmEmailRequest { Id = Id, Token = Token });
-                return Ok("User email confirmed");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(
-                    500,
-                    new { message = ex.Message, details = ex.InnerException?.Message }
-                );
-            }
         }
     }
 }
