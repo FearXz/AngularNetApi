@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using AngularNetApi.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 
 namespace AngularNetApi.Core.Entities
@@ -14,6 +13,5 @@ namespace AngularNetApi.Core.Entities
 
         // Navigation properties
         public virtual UserProfile UserProfile { get; set; }
-        public virtual CompanyProfile CompanyProfile { get; set; }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using AngularNetApi.Core.Entities;
-using AngularNetApi.Domain.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,6 +15,5 @@ namespace AngularNetApi.Infrastructure.Persistance
         }
 
         public DbSet<UserProfile> UserProfiles { get; set; }
-        public DbSet<CompanyProfile> CompanyProfiles { get; set; }
     }
 }
