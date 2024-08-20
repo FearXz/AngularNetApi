@@ -1,4 +1,4 @@
-﻿using AngularNetApi.Application.MediatR.ProfileManagement.User;
+﻿using AngularNetApi.API.Models;
 using AngularNetApi.Core.Entities;
 using AngularNetApi.Core.Exceptions;
 using AngularNetApi.Infrastructure.Interfaces;
@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AngularNetApi.Infrastructure.Repositories
 {
-    public class UserRepository : IUserRepository
+    public class AccountRepository : IAccountRepository
     {
         private readonly ApplicationDbContext _db;
 
-        public UserRepository(ApplicationDbContext db)
+        public AccountRepository(ApplicationDbContext db)
         {
             _db = db;
         }

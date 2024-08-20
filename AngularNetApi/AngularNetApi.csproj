@@ -40,7 +40,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="API\Models\" />
+    <Folder Include="Application\MediatR\AccountManagement\User\CreateUser\" />
     <Folder Include="Application\MediatR\StoreManagement\" />
     <Folder Include="Application\MediatR\AuditLog\" />
     <Folder Include="Application\MediatR\OrderProcessing\" />

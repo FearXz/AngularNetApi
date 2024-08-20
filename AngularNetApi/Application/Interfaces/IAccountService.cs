@@ -1,10 +1,10 @@
-﻿using AngularNetApi.Application.MediatR.ProfileManagement.User;
-using AngularNetApi.Application.MediatR.ProfileManagement.User.CreateUser;
+﻿using AngularNetApi.API.Models;
+using AngularNetApi.Application.MediatR.Authentication.Register;
 using AngularNetApi.Core.Entities;
 
 namespace AngularNetApi.Services.User
 {
-    public interface IUserService
+    public interface IAccountService
     {
         Task<UserData> GetByIdAsync(string userId);
         Task<UserData> CreateAsync(CreateUserRequest user);

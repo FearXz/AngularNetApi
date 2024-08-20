@@ -1,9 +1,9 @@
-﻿using AngularNetApi.Application.MediatR.ProfileManagement.User;
+﻿using AngularNetApi.API.Models;
 using AngularNetApi.Core.Entities;
 
 namespace AngularNetApi.Infrastructure.Interfaces
 {
-    public interface IUserRepository
+    public interface IAccountRepository
     {
         Task<UserData> GetByIdAsync(string userId);
         Task<UserData> CreateAsync(UserProfile user);

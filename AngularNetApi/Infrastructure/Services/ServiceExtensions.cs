@@ -24,10 +24,9 @@ namespace AngularNetApi.Infrastructure.Services
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddSingleton<EmailTemplate>();
 
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IUserService, UserService>();
-
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IAccountRepository, AccountRepository>();
+            services.AddScoped<IAccountService, AccountService>();
 
             return services;
         }

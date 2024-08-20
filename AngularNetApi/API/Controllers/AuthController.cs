@@ -1,6 +1,7 @@
 ﻿using AngularNetApi.Application.MediatR.Authentication.ConfirmEmail;
 using AngularNetApi.Application.MediatR.Authentication.Login;
 using AngularNetApi.Application.MediatR.Authentication.RefreshToken;
+using AngularNetApi.Application.MediatR.Authentication.Register;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,6 +24,18 @@ namespace AngularNetApi.API.Controllers
             if (!ModelState.IsValid)
             {
                 ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                return BadRequest(ModelState);
+            }
+
+            return Ok(await _mediator.Send(request));
+        }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError(string.Empty, "Invalid registration attempt.");
                 return BadRequest(ModelState);
             }
 

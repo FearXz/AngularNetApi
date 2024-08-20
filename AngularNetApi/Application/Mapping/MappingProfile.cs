@@ -1,4 +1,4 @@
-﻿using AngularNetApi.Application.MediatR.ProfileManagement.User.CreateUser;
+﻿using AngularNetApi.Application.MediatR.Authentication.Register;
 using AngularNetApi.Core.Entities;
 using AutoMapper;
 

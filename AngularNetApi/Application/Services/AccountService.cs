@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
-using AngularNetApi.Application.MediatR.ProfileManagement.User;
-using AngularNetApi.Application.MediatR.ProfileManagement.User.CreateUser;
+using AngularNetApi.API.Models;
+using AngularNetApi.Application.MediatR.Authentication.Register;
 using AngularNetApi.Core.Entities;
 using AngularNetApi.Core.Exceptions;
 using AngularNetApi.Core.ValueObjects;
@@ -15,21 +15,21 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace AngularNetApi.Application.Services
 {
-    public class UserService : IUserService
+    public class AccountService : IAccountService
     {
         private readonly IMapper _mapper;
         private readonly ApplicationDbContext _db;
-        private readonly IUserRepository _userRepository;
+        private readonly IAccountRepository _accountRepository;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEmailSender _emailSender;
         private readonly EmailTemplate _emailTemplate;
         private readonly LinkGenerator _link;
         private readonly IHttpContextAccessor _http;
 
-        public UserService(
+        public AccountService(
             IMapper mapper,
             ApplicationDbContext db,
-            IUserRepository userRepository,
+            IAccountRepository accountRepository,
             UserManager<ApplicationUser> userManager,
             IEmailSender emailSender,
             EmailTemplate emailTemplate,
@@ -40,7 +40,7 @@ namespace AngularNetApi.Application.Services
             _db = db;
             _mapper = mapper;
             _userManager = userManager;
-            _userRepository = userRepository;
+            _accountRepository = accountRepository;
             _emailSender = emailSender;
             _emailTemplate = emailTemplate;
             _link = linkGenerator;
@@ -49,7 +49,7 @@ namespace AngularNetApi.Application.Services
 
         public async Task<UserData> GetByIdAsync(string userId)
         {
-            var user = await _userRepository.GetByIdAsync(userId);
+            var user = await _accountRepository.GetByIdAsync(userId);
 
             return user;
         }
@@ -114,7 +114,7 @@ namespace AngularNetApi.Application.Services
                 }
 
                 // Create userProfile
-                var userData = await _userRepository.CreateAsync(userProfile);
+                var userData = await _accountRepository.CreateAsync(userProfile);
 
                 // Throw ServerErrorException if userProfile was not created
                 if (userData == null)
@@ -149,7 +149,6 @@ namespace AngularNetApi.Application.Services
             }
         }
 
-        // roba a caso non è fatto , non usare
         public async Task<UserData> UpdateAsync(UserProfile user)
         {
             throw new NotImplementedException();
