@@ -1,7 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using AngularNetApi.Application.MediatR.Authentication.ConfirmEmail;
+﻿using AngularNetApi.Application.MediatR.Authentication.ConfirmEmail;
 using AngularNetApi.Application.MediatR.Authentication.Login;
 using AngularNetApi.Application.MediatR.Authentication.RefreshToken;
 using AngularNetApi.Core.Entities;
@@ -11,6 +8,9 @@ using AngularNetApi.Services.Auth;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace AngularNetApi.Application.Services
 {
@@ -51,6 +51,10 @@ namespace AngularNetApi.Application.Services
                 true,
                 lockoutOnFailure: false
             );
+            if (result.IsNotAllowed)
+            {
+                throw new BadRequestException("User is not allowed to sign in.");
+            }
             // Throw exception if sign in fails
             if (!result.Succeeded)
             {

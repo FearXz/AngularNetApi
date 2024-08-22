@@ -1,6 +1,6 @@
-﻿using System.Security.Claims;
-using AngularNetApi.Core.Exceptions;
+﻿using AngularNetApi.Core.Exceptions;
 using Serilog;
+using System.Security.Claims;
 
 namespace AngularNetApi.API.Middlewares
 {
@@ -26,101 +26,123 @@ namespace AngularNetApi.API.Middlewares
 
                 if (ex is ServerErrorException serverErrorEx)
                 {
+                    var methodName = serverErrorEx.TargetSite?.DeclaringType?.Name;
+                    if (methodName != null && methodName.Contains('<'))
+                        methodName = methodName.Substring(1, methodName.IndexOf('>') - 1);
                     // Log dell'eccezione specifica
                     Log.Error(
-                        $"UserId: {userId} ServerErrorException: {serverErrorEx.Message} , {serverErrorEx.InnerException?.Message}"
+                        $"Exception caught in {methodName}: {serverErrorEx.Message} {serverErrorEx.InnerException?.Message} UserId: {userId}"
                     );
 
                     // Imposta il codice di stato e il contenuto della risposta
                     context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                     context.Response.ContentType = "text/plain";
                     await context.Response.WriteAsync(
-                        serverErrorEx.Message + " " + serverErrorEx.InnerException?.Message
+                        $"Exception caught in {methodName}: {serverErrorEx.Message} {serverErrorEx.InnerException?.Message} UserId: {userId}"
                     );
                 }
                 // Gestisci eccezioni personalizzate
                 else if (ex is NotFoundException notFoundEx)
                 {
+                    var methodName = notFoundEx.TargetSite?.DeclaringType?.Name;
+                    if (methodName != null && methodName.Contains('<'))
+                        methodName = methodName.Substring(1, methodName.IndexOf('>') - 1);
                     // Log dell'eccezione specifica
                     Log.Error(
-                        $"UserId: {userId} NotFoundException: {notFoundEx.Message}  {notFoundEx.InnerException?.Message}"
+                        $"Exception caught in {methodName}: {notFoundEx.Message} {notFoundEx.InnerException?.Message} UserId: {userId}"
                     );
 
                     // Imposta il codice di stato e il contenuto della risposta
                     context.Response.StatusCode = StatusCodes.Status404NotFound;
                     context.Response.ContentType = "text/plain";
                     await context.Response.WriteAsync(
-                        notFoundEx.Message + " " + notFoundEx.InnerException?.Message
+                        $"Exception caught in {methodName}: {notFoundEx.Message} {notFoundEx.InnerException?.Message} UserId: {userId}"
                     );
                 }
-                else if (ex is BadRequestException exception)
+                else if (ex is BadRequestException badRequestEx)
                 {
+                    var methodName = badRequestEx.TargetSite?.DeclaringType?.Name;
+                    if (methodName != null && methodName.Contains('<'))
+                        methodName = methodName.Substring(1, methodName.IndexOf('>') - 1);
+
                     // Log dell'eccezione specifica
                     Log.Error(
-                        $"UserId: {userId} BadRequestException: {exception.Message}  {exception.InnerException?.Message}"
+                        $"Exception caught in {methodName}: {badRequestEx.Message} {badRequestEx.InnerException?.Message} UserId: {userId}"
                     );
 
                     // Imposta il codice di stato e il contenuto della risposta
                     context.Response.StatusCode = StatusCodes.Status400BadRequest;
                     context.Response.ContentType = "text/plain";
                     await context.Response.WriteAsync(
-                        exception.Message + " " + exception.InnerException?.Message
+                        $"Exception caught in {methodName}: {badRequestEx.Message} {badRequestEx.InnerException?.Message} UserId: {userId}"
                     );
                 }
                 else if (ex is UnauthorizedException unauthorizedEx)
                 {
+                    var methodName = unauthorizedEx.TargetSite?.DeclaringType?.Name;
+                    if (methodName != null && methodName.Contains('<'))
+                        methodName = methodName.Substring(1, methodName.IndexOf('>') - 1);
                     // Log dell'eccezione specifica
                     Log.Error(
-                        $"UserId: {userId} UnauthorizedException: {unauthorizedEx.Message}  {unauthorizedEx.InnerException?.Message}"
+                        $"Exception caught in {methodName}: {unauthorizedEx.Message} {unauthorizedEx.InnerException?.Message} UserId: {userId}"
                     );
 
                     // Imposta il codice di stato e il contenuto della risposta
                     context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                     context.Response.ContentType = "text/plain";
                     await context.Response.WriteAsync(
-                        unauthorizedEx.Message + " " + unauthorizedEx.InnerException?.Message
+                        $"Exception caught in {methodName}: {unauthorizedEx.Message} {unauthorizedEx.InnerException?.Message} UserId: {userId}"
                     );
                 }
                 else if (ex is LockedOutException lockedOutEx)
                 {
+                    var methodName = lockedOutEx.TargetSite?.DeclaringType?.Name;
+                    if (methodName != null && methodName.Contains('<'))
+                        methodName = methodName.Substring(1, methodName.IndexOf('>') - 1);
                     // Log dell'eccezione specifica
                     Log.Error(
-                        $"UserId: {userId} LockedOutException: {lockedOutEx.Message}  {lockedOutEx.InnerException?.Message}"
+                        $"Exception caught in {methodName}: {lockedOutEx.Message} {lockedOutEx.InnerException?.Message} UserId: {userId}"
                     );
 
                     // Imposta il codice di stato e il contenuto della risposta
                     context.Response.StatusCode = StatusCodes.Status423Locked;
                     context.Response.ContentType = "text/plain";
                     await context.Response.WriteAsync(
-                        lockedOutEx.Message + " " + lockedOutEx.InnerException?.Message
+                        $"Exception caught in {methodName}: {lockedOutEx.Message} {lockedOutEx.InnerException?.Message} UserId: {userId}"
                     );
                 }
                 else if (ex is ForbiddenException forbiddenEx)
                 {
+                    var methodName = forbiddenEx.TargetSite?.DeclaringType?.Name;
+                    if (methodName != null && methodName.Contains('<'))
+                        methodName = methodName.Substring(1, methodName.IndexOf('>') - 1);
                     // Log dell'eccezione specifica
                     Log.Error(
-                        $"UserId: {userId} ForbiddenException: {forbiddenEx.Message}  {forbiddenEx.InnerException?.Message}"
+                        $"Exception caught in {methodName}: {forbiddenEx.Message} {forbiddenEx.InnerException?.Message} UserId: {userId}"
                     );
 
                     // Imposta il codice di stato e il contenuto della risposta
                     context.Response.StatusCode = StatusCodes.Status403Forbidden;
                     context.Response.ContentType = "text/plain";
                     await context.Response.WriteAsync(
-                        forbiddenEx.Message + " " + forbiddenEx.InnerException?.Message
+                        $"Exception caught in {methodName}: {forbiddenEx.Message} {forbiddenEx.InnerException?.Message} UserId: {userId}"
                     );
                 }
                 else
                 {
+                    var methodName = ex.TargetSite?.DeclaringType?.Name;
+                    if (methodName != null && methodName.Contains('<'))
+                        methodName = methodName.Substring(1, methodName.IndexOf('>') - 1);
                     // Log dell'eccezione generica
                     Log.Error(
-                        $"UserId: {userId} Exception: {ex.Message}  {ex.InnerException?.Message}"
+                        $"Exception caught in {methodName}: {ex.Message} {ex.InnerException?.Message} UserId: {userId}"
                     );
 
                     // Imposta il codice di stato e il contenuto della risposta
                     context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                     context.Response.ContentType = "text/plain";
                     await context.Response.WriteAsync(
-                        ex.Message + " " + ex.InnerException?.Message
+                        $"Exception caught in {methodName}: {ex.Message} {ex.InnerException?.Message} UserId: {userId}"
                     );
                 }
             }

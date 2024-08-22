@@ -31,7 +31,7 @@ namespace AngularNetApi.Core.Entities
         public string MobileNumber { get; set; }
 
         // Navigation Property
-
+        [InverseProperty("UserProfile")]
         public virtual ApplicationUser ApplicationUser { get; set; }
     }
 }

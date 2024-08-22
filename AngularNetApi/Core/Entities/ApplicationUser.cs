@@ -1,5 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AngularNetApi.Core.Entities
 {
@@ -12,6 +13,7 @@ namespace AngularNetApi.Core.Entities
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         // Navigation properties
+        [InverseProperty("ApplicationUser")]
         public virtual UserProfile UserProfile { get; set; }
     }
 }
