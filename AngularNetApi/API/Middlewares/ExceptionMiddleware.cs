@@ -22,7 +22,7 @@ namespace AngularNetApi.API.Middlewares
             }
             catch (Exception ex)
             {
-                var userId = context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "Unknown";
+                var userId = context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
 
                 if (ex is ServerErrorException serverErrorEx)
                 {
@@ -31,14 +31,14 @@ namespace AngularNetApi.API.Middlewares
                         methodName = methodName.Substring(1, methodName.IndexOf('>') - 1);
                     // Log dell'eccezione specifica
                     Log.Error(
-                        $"Exception caught in {methodName}: {serverErrorEx.Message} {serverErrorEx.InnerException?.Message} UserId: {userId}"
+                        $"Exception caught in {methodName}: {serverErrorEx.Message} {serverErrorEx.InnerException?.Message} \n{(string.IsNullOrEmpty(userId) ? "" : "UserId: " + userId)}"
                     );
 
                     // Imposta il codice di stato e il contenuto della risposta
                     context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                     context.Response.ContentType = "text/plain";
                     await context.Response.WriteAsync(
-                        $"Exception caught in {methodName}: {serverErrorEx.Message} {serverErrorEx.InnerException?.Message} UserId: {userId}"
+                        $"Exception caught in {methodName}: {serverErrorEx.Message} {serverErrorEx.InnerException?.Message} \n{(string.IsNullOrEmpty(userId) ? "" : "UserId: " + userId)}"
                     );
                 }
                 // Gestisci eccezioni personalizzate
@@ -49,14 +49,14 @@ namespace AngularNetApi.API.Middlewares
                         methodName = methodName.Substring(1, methodName.IndexOf('>') - 1);
                     // Log dell'eccezione specifica
                     Log.Error(
-                        $"Exception caught in {methodName}: {notFoundEx.Message} {notFoundEx.InnerException?.Message} UserId: {userId}"
+                        $"Exception caught in {methodName}: {notFoundEx.Message} {notFoundEx.InnerException?.Message} \n{(string.IsNullOrEmpty(userId) ? "" : "UserId: " + userId)}"
                     );
 
                     // Imposta il codice di stato e il contenuto della risposta
                     context.Response.StatusCode = StatusCodes.Status404NotFound;
                     context.Response.ContentType = "text/plain";
                     await context.Response.WriteAsync(
-                        $"Exception caught in {methodName}: {notFoundEx.Message} {notFoundEx.InnerException?.Message} UserId: {userId}"
+                        $"Exception caught in {methodName}: {notFoundEx.Message} {notFoundEx.InnerException?.Message} \n{(string.IsNullOrEmpty(userId) ? "" : "UserId: " + userId)}"
                     );
                 }
                 else if (ex is BadRequestException badRequestEx)
@@ -67,14 +67,14 @@ namespace AngularNetApi.API.Middlewares
 
                     // Log dell'eccezione specifica
                     Log.Error(
-                        $"Exception caught in {methodName}: {badRequestEx.Message} {badRequestEx.InnerException?.Message} UserId: {userId}"
+                        $"Exception caught in {methodName}: {badRequestEx.Message} {badRequestEx.InnerException?.Message} \n\n{(string.IsNullOrEmpty(userId) ? "" : "UserId: " + userId)}"
                     );
 
                     // Imposta il codice di stato e il contenuto della risposta
                     context.Response.StatusCode = StatusCodes.Status400BadRequest;
                     context.Response.ContentType = "text/plain";
                     await context.Response.WriteAsync(
-                        $"Exception caught in {methodName}: {badRequestEx.Message} {badRequestEx.InnerException?.Message} UserId: {userId}"
+                        $"Exception caught in {methodName}: {badRequestEx.Message} {badRequestEx.InnerException?.Message} \n\n{(string.IsNullOrEmpty(userId) ? "" : "UserId: " + userId)}"
                     );
                 }
                 else if (ex is UnauthorizedException unauthorizedEx)
@@ -84,14 +84,14 @@ namespace AngularNetApi.API.Middlewares
                         methodName = methodName.Substring(1, methodName.IndexOf('>') - 1);
                     // Log dell'eccezione specifica
                     Log.Error(
-                        $"Exception caught in {methodName}: {unauthorizedEx.Message} {unauthorizedEx.InnerException?.Message} UserId: {userId}"
+                        $"Exception caught in {methodName}: {unauthorizedEx.Message} {unauthorizedEx.InnerException?.Message} \n{(string.IsNullOrEmpty(userId) ? "" : "UserId: " + userId)}"
                     );
 
                     // Imposta il codice di stato e il contenuto della risposta
                     context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                     context.Response.ContentType = "text/plain";
                     await context.Response.WriteAsync(
-                        $"Exception caught in {methodName}: {unauthorizedEx.Message} {unauthorizedEx.InnerException?.Message} UserId: {userId}"
+                        $"Exception caught in {methodName}: {unauthorizedEx.Message} {unauthorizedEx.InnerException?.Message} \n{(string.IsNullOrEmpty(userId) ? "" : "UserId: " + userId)}"
                     );
                 }
                 else if (ex is LockedOutException lockedOutEx)
@@ -101,14 +101,14 @@ namespace AngularNetApi.API.Middlewares
                         methodName = methodName.Substring(1, methodName.IndexOf('>') - 1);
                     // Log dell'eccezione specifica
                     Log.Error(
-                        $"Exception caught in {methodName}: {lockedOutEx.Message} {lockedOutEx.InnerException?.Message} UserId: {userId}"
+                        $"Exception caught in {methodName}: {lockedOutEx.Message} {lockedOutEx.InnerException?.Message} \n{(string.IsNullOrEmpty(userId) ? "" : "UserId: " + userId)}"
                     );
 
                     // Imposta il codice di stato e il contenuto della risposta
                     context.Response.StatusCode = StatusCodes.Status423Locked;
                     context.Response.ContentType = "text/plain";
                     await context.Response.WriteAsync(
-                        $"Exception caught in {methodName}: {lockedOutEx.Message} {lockedOutEx.InnerException?.Message} UserId: {userId}"
+                        $"Exception caught in {methodName}: {lockedOutEx.Message} {lockedOutEx.InnerException?.Message} \n{(string.IsNullOrEmpty(userId) ? "" : "UserId: " + userId)}"
                     );
                 }
                 else if (ex is ForbiddenException forbiddenEx)
@@ -118,14 +118,14 @@ namespace AngularNetApi.API.Middlewares
                         methodName = methodName.Substring(1, methodName.IndexOf('>') - 1);
                     // Log dell'eccezione specifica
                     Log.Error(
-                        $"Exception caught in {methodName}: {forbiddenEx.Message} {forbiddenEx.InnerException?.Message} UserId: {userId}"
+                        $"Exception caught in {methodName}: {forbiddenEx.Message} {forbiddenEx.InnerException?.Message} \n{(string.IsNullOrEmpty(userId) ? "" : "UserId: " + userId)}"
                     );
 
                     // Imposta il codice di stato e il contenuto della risposta
                     context.Response.StatusCode = StatusCodes.Status403Forbidden;
                     context.Response.ContentType = "text/plain";
                     await context.Response.WriteAsync(
-                        $"Exception caught in {methodName}: {forbiddenEx.Message} {forbiddenEx.InnerException?.Message} UserId: {userId}"
+                        $"Exception caught in {methodName}: {forbiddenEx.Message} {forbiddenEx.InnerException?.Message} \n{(string.IsNullOrEmpty(userId) ? "" : "UserId: " + userId)}"
                     );
                 }
                 else
@@ -135,14 +135,14 @@ namespace AngularNetApi.API.Middlewares
                         methodName = methodName.Substring(1, methodName.IndexOf('>') - 1);
                     // Log dell'eccezione generica
                     Log.Error(
-                        $"Exception caught in {methodName}: {ex.Message} {ex.InnerException?.Message} UserId: {userId}"
+                        $"Exception caught in {methodName}: {ex.Message} {ex.InnerException?.Message} \n{(string.IsNullOrEmpty(userId) ? "" : "UserId: " + userId)}"
                     );
 
                     // Imposta il codice di stato e il contenuto della risposta
                     context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                     context.Response.ContentType = "text/plain";
                     await context.Response.WriteAsync(
-                        $"Exception caught in {methodName}: {ex.Message} {ex.InnerException?.Message} UserId: {userId}"
+                        $"Exception caught in {methodName}: {ex.Message} {ex.InnerException?.Message} \n{(string.IsNullOrEmpty(userId) ? "" : "UserId: " + userId)}"
                     );
                 }
             }
