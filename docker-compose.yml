@@ -1,0 +1,36 @@
+version: '3.4'
+
+services:
+  angularnetapi:
+    image: ${DOCKER_REGISTRY-}angularnetapi
+    build:
+      context: .
+      dockerfile: AngularNetApi/Dockerfile
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    depends_on:
+      - sqlserver
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+    networks:
+      - angularnetapi-network
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:latest
+    environment:
+      SA_PASSWORD: "FearXz/92"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserverdata:/var/opt/mssql
+    networks:
+      - angularnetapi-network
+
+networks:
+  angularnetapi-network:
+    driver: bridge
+
+volumes:
+  sqlserverdata:

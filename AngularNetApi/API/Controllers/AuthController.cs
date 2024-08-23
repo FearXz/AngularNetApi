@@ -3,6 +3,7 @@ using AngularNetApi.Application.MediatR.Authentication.Login;
 using AngularNetApi.Application.MediatR.Authentication.RefreshToken;
 using AngularNetApi.Application.MediatR.Authentication.Register;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AngularNetApi.API.Controllers
@@ -12,10 +13,12 @@ namespace AngularNetApi.API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AuthController(IMediator mediator)
+        public AuthController(IMediator mediator, RoleManager<IdentityRole> roleManager)
         {
             _mediator = mediator;
+            _roleManager = roleManager;
         }
 
         [HttpPost("login")]
@@ -67,27 +70,27 @@ namespace AngularNetApi.API.Controllers
             return Ok("User email confirmed");
         }
 
-        //[HttpPost("createrole")]
-        //public async Task<IActionResult> CreateRole(string roleName)
-        //{
-        //    if (string.IsNullOrEmpty(roleName))
-        //    {
-        //        return BadRequest("Role name cannot be empty");
-        //    }
+        [HttpPost("createrole")]
+        public async Task<IActionResult> CreateRole(string roleName)
+        {
+            if (string.IsNullOrEmpty(roleName))
+            {
+                return BadRequest("Role name cannot be empty");
+            }
 
-        //    var roleExists = await _roleManager.RoleExistsAsync(roleName);
-        //    if (roleExists)
-        //    {
-        //        return BadRequest("Role already exists");
-        //    }
+            var roleExists = await _roleManager.RoleExistsAsync(roleName);
+            if (roleExists)
+            {
+                return BadRequest("Role already exists");
+            }
 
-        //    var result = await _roleManager.CreateAsync(new IdentityRole(roleName));
-        //    if (result.Succeeded)
-        //    {
-        //        return Ok("Role created successfully");
-        //    }
+            var result = await _roleManager.CreateAsync(new IdentityRole(roleName));
+            if (result.Succeeded)
+            {
+                return Ok("Role created successfully");
+            }
 
-        //    return BadRequest(result.Errors);
-        //}
+            return BadRequest(result.Errors);
+        }
     }
 }

@@ -1,5 +1,3 @@
-using System.Reflection;
-using System.Text;
 using AngularNetApi.API.Middlewares;
 using AngularNetApi.Core.Entities;
 using AngularNetApi.Infrastructure.Persistance;
@@ -8,6 +6,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using System.Reflection;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -112,5 +112,12 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Ensure the database is created and migrations are applied
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    dbContext.Database.Migrate(); // Applies pending migrations
+}
 
 app.Run();
