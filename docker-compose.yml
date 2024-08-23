@@ -15,8 +15,8 @@ services:
       ASPNETCORE_ENVIRONMENT: "Development"
       ConnectionStrings__AngularNetConnection: "Server=sqlserver;Database=AngularNetDb;User ID=sa;Password=FearXz/92;TrustServerCertificate=True;Encrypt=True;"
       Jwt__Key: "3fD8@1kU^2nLrXxZpA$8W7!bR#Qj0LzY"
-      Jwt__Issuer: "Take2MeApi"
-      Jwt__Audience: "Take2MeClient"
+      Jwt__Issuer: "NetApi"
+      Jwt__Audience: "Angular"
       Email__Sender: "homeserverxxx@gmail.com"
       Email__Password: "vqpahyjfwpqrgzrc"
     networks:
