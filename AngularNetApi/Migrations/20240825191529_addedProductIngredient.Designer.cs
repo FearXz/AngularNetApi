@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AngularNetApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240820211408_reworkAccountSystem")]
-    partial class reworkAccountSystem
+    [Migration("20240825191529_addedProductIngredient")]
+    partial class addedProductIngredient
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -96,6 +96,208 @@ namespace AngularNetApi.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("AngularNetApi.Core.Entities.FiscalData", b =>
+                {
+                    b.Property<int>("FiscalDataId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FiscalDataId"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CAP")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IBAN")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("StoreId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UniqueCode")
+                        .IsRequired()
+                        .HasMaxLength(6)
+                        .HasColumnType("nvarchar(6)");
+
+                    b.Property<string>("VATNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("FiscalDataId");
+
+                    b.HasIndex("StoreId")
+                        .IsUnique();
+
+                    b.ToTable("FiscalData");
+                });
+
+            modelBuilder.Entity("AngularNetApi.Core.Entities.Ingredient", b =>
+                {
+                    b.Property<int>("IngredientId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IngredientId"));
+
+                    b.Property<string>("IngredientName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("IngredientPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("StoreId")
+                        .HasColumnType("int");
+
+                    b.HasKey("IngredientId");
+
+                    b.ToTable("Ingredients");
+                });
+
+            modelBuilder.Entity("AngularNetApi.Core.Entities.JoinProductIngredient", b =>
+                {
+                    b.Property<int>("JoinProductIngredientId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("JoinProductIngredientId"));
+
+                    b.Property<int>("IngredientId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.HasKey("JoinProductIngredientId");
+
+                    b.HasIndex("IngredientId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("JoinProductIngredients");
+                });
+
+            modelBuilder.Entity("AngularNetApi.Core.Entities.Product", b =>
+                {
+                    b.Property<int>("ProductId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductId"));
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ProductImg")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("ProductPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("StoreId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ProductId");
+
+                    b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("AngularNetApi.Core.Entities.Store", b =>
+                {
+                    b.Property<int>("StoreId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StoreId"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CAP")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<TimeSpan?>("ClosingTime")
+                        .HasColumnType("time");
+
+                    b.Property<string>("CoverImg")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Latitude")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LogoImg")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Longitude")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<TimeSpan?>("OpeningTime")
+                        .HasColumnType("time");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StoreName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StoreTag")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("StoreId");
+
+                    b.HasIndex("ApplicationUserId")
+                        .IsUnique();
+
+                    b.ToTable("Stores");
+                });
+
             modelBuilder.Entity("AngularNetApi.Core.Entities.UserProfile", b =>
                 {
                     b.Property<int>("UserProfileId")
@@ -123,11 +325,11 @@ namespace AngularNetApi.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("MobileNumber")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -279,6 +481,41 @@ namespace AngularNetApi.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("AngularNetApi.Core.Entities.FiscalData", b =>
+                {
+                    b.HasOne("AngularNetApi.Core.Entities.Store", null)
+                        .WithOne("FiscalData")
+                        .HasForeignKey("AngularNetApi.Core.Entities.FiscalData", "StoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("AngularNetApi.Core.Entities.JoinProductIngredient", b =>
+                {
+                    b.HasOne("AngularNetApi.Core.Entities.Ingredient", "Ingredient")
+                        .WithMany()
+                        .HasForeignKey("IngredientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AngularNetApi.Core.Entities.Product", null)
+                        .WithMany("JoinProductIngredients")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ingredient");
+                });
+
+            modelBuilder.Entity("AngularNetApi.Core.Entities.Store", b =>
+                {
+                    b.HasOne("AngularNetApi.Core.Entities.ApplicationUser", null)
+                        .WithOne("Store")
+                        .HasForeignKey("AngularNetApi.Core.Entities.Store", "ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("AngularNetApi.Core.Entities.UserProfile", b =>
                 {
                     b.HasOne("AngularNetApi.Core.Entities.ApplicationUser", "ApplicationUser")
@@ -343,7 +580,21 @@ namespace AngularNetApi.Migrations
 
             modelBuilder.Entity("AngularNetApi.Core.Entities.ApplicationUser", b =>
                 {
+                    b.Navigation("Store")
+                        .IsRequired();
+
                     b.Navigation("UserProfile")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("AngularNetApi.Core.Entities.Product", b =>
+                {
+                    b.Navigation("JoinProductIngredients");
+                });
+
+            modelBuilder.Entity("AngularNetApi.Core.Entities.Store", b =>
+                {
+                    b.Navigation("FiscalData")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

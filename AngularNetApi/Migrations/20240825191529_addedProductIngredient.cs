@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace AngularNetApi.Migrations
 {
     /// <inheritdoc />
-    public partial class start : Migration
+    public partial class addedProductIngredient : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -50,6 +50,40 @@ namespace AngularNetApi.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Ingredients",
+                columns: table => new
+                {
+                    IngredientId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StoreId = table.Column<int>(type: "int", nullable: false),
+                    IngredientName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IngredientPrice = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Ingredients", x => x.IngredientId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Products",
+                columns: table => new
+                {
+                    ProductId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StoreId = table.Column<int>(type: "int", nullable: false),
+                    ProductName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProductPrice = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ProductImg = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Products", x => x.ProductId);
                 });
 
             migrationBuilder.CreateTable(
@@ -159,27 +193,32 @@ namespace AngularNetApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CompanyProfiles",
+                name: "Stores",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    StoreId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CompanyName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    VATNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    StoreName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     City = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CAP = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TelephoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MobileNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CAP = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
+                    Latitude = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Longitude = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    OpeningTime = table.Column<TimeSpan>(type: "time", nullable: true),
+                    ClosingTime = table.Column<TimeSpan>(type: "time", nullable: true),
+                    StoreTag = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CoverImg = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LogoImg = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CompanyProfiles", x => x.Id);
+                    table.PrimaryKey("PK_Stores", x => x.StoreId);
                     table.ForeignKey(
-                        name: "FK_CompanyProfiles_AspNetUsers_ApplicationUserId",
+                        name: "FK_Stores_AspNetUsers_ApplicationUserId",
                         column: x => x.ApplicationUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -190,26 +229,78 @@ namespace AngularNetApi.Migrations
                 name: "UserProfiles",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    UserProfileId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Surname = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     City = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CAP = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MobileNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserProfiles", x => x.Id);
+                    table.PrimaryKey("PK_UserProfiles", x => x.UserProfileId);
                     table.ForeignKey(
                         name: "FK_UserProfiles_AspNetUsers_ApplicationUserId",
                         column: x => x.ApplicationUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "JoinProductIngredients",
+                columns: table => new
+                {
+                    JoinProductIngredientId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    IngredientId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_JoinProductIngredients", x => x.JoinProductIngredientId);
+                    table.ForeignKey(
+                        name: "FK_JoinProductIngredients_Ingredients_IngredientId",
+                        column: x => x.IngredientId,
+                        principalTable: "Ingredients",
+                        principalColumn: "IngredientId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_JoinProductIngredients_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "ProductId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FiscalData",
+                columns: table => new
+                {
+                    FiscalDataId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StoreId = table.Column<int>(type: "int", nullable: false),
+                    CompanyName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    VATNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    City = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CAP = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
+                    IBAN = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UniqueCode = table.Column<string>(type: "nvarchar(6)", maxLength: 6, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FiscalData", x => x.FiscalDataId);
+                    table.ForeignKey(
+                        name: "FK_FiscalData_Stores_StoreId",
+                        column: x => x.StoreId,
+                        principalTable: "Stores",
+                        principalColumn: "StoreId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -253,8 +344,24 @@ namespace AngularNetApi.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CompanyProfiles_ApplicationUserId",
-                table: "CompanyProfiles",
+                name: "IX_FiscalData_StoreId",
+                table: "FiscalData",
+                column: "StoreId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_JoinProductIngredients_IngredientId",
+                table: "JoinProductIngredients",
+                column: "IngredientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_JoinProductIngredients_ProductId",
+                table: "JoinProductIngredients",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Stores_ApplicationUserId",
+                table: "Stores",
                 column: "ApplicationUserId",
                 unique: true);
 
@@ -284,13 +391,25 @@ namespace AngularNetApi.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "CompanyProfiles");
+                name: "FiscalData");
+
+            migrationBuilder.DropTable(
+                name: "JoinProductIngredients");
 
             migrationBuilder.DropTable(
                 name: "UserProfiles");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Stores");
+
+            migrationBuilder.DropTable(
+                name: "Ingredients");
+
+            migrationBuilder.DropTable(
+                name: "Products");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

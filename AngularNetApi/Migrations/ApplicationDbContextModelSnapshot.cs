@@ -142,6 +142,89 @@ namespace AngularNetApi.Migrations
                     b.ToTable("FiscalData");
                 });
 
+            modelBuilder.Entity("AngularNetApi.Core.Entities.Ingredient", b =>
+                {
+                    b.Property<int>("IngredientId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IngredientId"));
+
+                    b.Property<string>("IngredientName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("IngredientPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("StoreId")
+                        .HasColumnType("int");
+
+                    b.HasKey("IngredientId");
+
+                    b.ToTable("Ingredients");
+                });
+
+            modelBuilder.Entity("AngularNetApi.Core.Entities.JoinProductIngredient", b =>
+                {
+                    b.Property<int>("JoinProductIngredientId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("JoinProductIngredientId"));
+
+                    b.Property<int>("IngredientId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.HasKey("JoinProductIngredientId");
+
+                    b.HasIndex("IngredientId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("JoinProductIngredients");
+                });
+
+            modelBuilder.Entity("AngularNetApi.Core.Entities.Product", b =>
+                {
+                    b.Property<int>("ProductId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductId"));
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ProductImg")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("ProductPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("StoreId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ProductId");
+
+                    b.ToTable("Products");
+                });
+
             modelBuilder.Entity("AngularNetApi.Core.Entities.Store", b =>
                 {
                     b.Property<int>("StoreId")
@@ -404,6 +487,23 @@ namespace AngularNetApi.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("AngularNetApi.Core.Entities.JoinProductIngredient", b =>
+                {
+                    b.HasOne("AngularNetApi.Core.Entities.Ingredient", "Ingredient")
+                        .WithMany()
+                        .HasForeignKey("IngredientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AngularNetApi.Core.Entities.Product", null)
+                        .WithMany("JoinProductIngredients")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ingredient");
+                });
+
             modelBuilder.Entity("AngularNetApi.Core.Entities.Store", b =>
                 {
                     b.HasOne("AngularNetApi.Core.Entities.ApplicationUser", null)
@@ -482,6 +582,11 @@ namespace AngularNetApi.Migrations
 
                     b.Navigation("UserProfile")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("AngularNetApi.Core.Entities.Product", b =>
+                {
+                    b.Navigation("JoinProductIngredients");
                 });
 
             modelBuilder.Entity("AngularNetApi.Core.Entities.Store", b =>
