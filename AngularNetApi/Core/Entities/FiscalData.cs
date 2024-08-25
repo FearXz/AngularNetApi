@@ -3,20 +3,20 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AngularNetApi.Core.Entities
 {
-    public class UserProfile : BaseEntities
+    public class FiscalData
     {
         [Key]
-        public int UserProfileId { get; set; }
+        public int FiscalDataId { get; set; }
 
         [Required]
-        [ForeignKey("ApplicationUser")]
-        public string ApplicationUserId { get; set; }
+        [ForeignKey("StoreId")]
+        public int StoreId { get; set; }
 
         [Required]
-        public string Name { get; set; }
+        public string CompanyName { get; set; }
 
         [Required]
-        public string Surname { get; set; }
+        public string VATNumber { get; set; }
 
         [Required]
         public string Address { get; set; }
@@ -25,13 +25,14 @@ namespace AngularNetApi.Core.Entities
         public string City { get; set; }
 
         [Required]
+        [StringLength(5)]
         public string CAP { get; set; }
 
         [Required]
-        public string PhoneNumber { get; set; }
+        public string IBAN { get; set; }
 
-        // Navigation Property
-
-        public virtual ApplicationUser ApplicationUser { get; set; }
+        [Required]
+        [StringLength(6)]
+        public string UniqueCode { get; set; }
     }
 }

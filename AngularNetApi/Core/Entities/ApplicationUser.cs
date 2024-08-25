@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
 
 namespace AngularNetApi.Core.Entities
 {
@@ -15,5 +15,7 @@ namespace AngularNetApi.Core.Entities
         // Navigation properties
         [InverseProperty("ApplicationUser")]
         public virtual UserProfile UserProfile { get; set; }
+
+        public virtual Store Store { get; set; }
     }
 }

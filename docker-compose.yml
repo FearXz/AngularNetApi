@@ -16,7 +16,7 @@ services:
       ConnectionStrings__AngularNetConnection: "Server=sqlserver;Database=AngularNetDb;User ID=sa;Password=AdminXz/92;TrustServerCertificate=True;Encrypt=True;"
       Jwt__Key: "3fD8@1kU^2nLrXxZpA$8W7!bR#Qj0LzY"
       Jwt__Issuer: "NetApi"
-      Jwt__Audience: "Angular"
+      Jwt__Audience: "AngularClient"
       Email__Sender: "homeserverxxx@gmail.com"
       Email__Password: "vqpahyjfwpqrgzrc"
     networks:

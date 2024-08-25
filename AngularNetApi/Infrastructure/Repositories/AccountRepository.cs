@@ -31,7 +31,7 @@ namespace AngularNetApi.Infrastructure.Repositories
                     Address = u.UserProfile.Address,
                     City = u.UserProfile.City,
                     CAP = u.UserProfile.CAP,
-                    MobileNumber = u.UserProfile.MobileNumber
+                    MobileNumber = u.UserProfile.PhoneNumber
                 })
                 .FirstOrDefaultAsync();
 
