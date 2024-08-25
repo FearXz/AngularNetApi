@@ -48,5 +48,6 @@ namespace AngularNetApi.Core.Entities
         // Navigation Property
 
         public virtual FiscalData FiscalData { get; set; }
+        public virtual ICollection<Product> Products { get; set; }
     }
 }

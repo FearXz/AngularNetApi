@@ -1,12 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace AngularNetApi.Core.Entities
 {
     public class JoinProductIngredient
     {
         [Key]
-        public int JoinProductIngredientId { get; set; }
+        public int ProductIngredientId { get; set; }
 
         [Required]
         [ForeignKey("ProductId")]
@@ -16,7 +17,7 @@ namespace AngularNetApi.Core.Entities
         [ForeignKey("IngredientId")]
         public int IngredientId { get; set; }
 
-        // Proprietà di navigazione
+        // Navigation Property
         public virtual Ingredient Ingredient { get; set; }
     }
 }

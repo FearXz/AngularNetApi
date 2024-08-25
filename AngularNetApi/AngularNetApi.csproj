@@ -50,7 +50,6 @@
     <Folder Include="Application\MediatR\OrderProcessing\" />
     <Folder Include="Application\MediatR\Notification\" />
     <Folder Include="Application\MediatR\OrderOps\" />
-    <Folder Include="Migrations\" />
     <Folder Include="Test\" />
   </ItemGroup>
 

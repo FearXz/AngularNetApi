@@ -27,6 +27,6 @@ namespace AngularNetApi.Core.Entities
         public string? ProductImg { get; set; }
 
         // Navigation Property
-        public virtual ICollection<JoinProductIngredient> JoinProductIngredients { get; set; }
+        public virtual ICollection<JoinProductIngredient> JoinProductIngredient { get; set; }
     }
 }

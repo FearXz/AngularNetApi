@@ -171,11 +171,11 @@ namespace AngularNetApi.Migrations
 
             modelBuilder.Entity("AngularNetApi.Core.Entities.JoinProductIngredient", b =>
                 {
-                    b.Property<int>("JoinProductIngredientId")
+                    b.Property<int>("ProductIngredientId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("JoinProductIngredientId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductIngredientId"));
 
                     b.Property<int>("IngredientId")
                         .HasColumnType("int");
@@ -183,7 +183,7 @@ namespace AngularNetApi.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.HasKey("JoinProductIngredientId");
+                    b.HasKey("ProductIngredientId");
 
                     b.HasIndex("IngredientId");
 
@@ -221,6 +221,8 @@ namespace AngularNetApi.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("ProductId");
+
+                    b.HasIndex("StoreId");
 
                     b.ToTable("Products");
                 });
@@ -496,12 +498,21 @@ namespace AngularNetApi.Migrations
                         .IsRequired();
 
                     b.HasOne("AngularNetApi.Core.Entities.Product", null)
-                        .WithMany("JoinProductIngredients")
+                        .WithMany("JoinProductIngredient")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Ingredient");
+                });
+
+            modelBuilder.Entity("AngularNetApi.Core.Entities.Product", b =>
+                {
+                    b.HasOne("AngularNetApi.Core.Entities.Store", null)
+                        .WithMany("Products")
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AngularNetApi.Core.Entities.Store", b =>
@@ -586,13 +597,15 @@ namespace AngularNetApi.Migrations
 
             modelBuilder.Entity("AngularNetApi.Core.Entities.Product", b =>
                 {
-                    b.Navigation("JoinProductIngredients");
+                    b.Navigation("JoinProductIngredient");
                 });
 
             modelBuilder.Entity("AngularNetApi.Core.Entities.Store", b =>
                 {
                     b.Navigation("FiscalData")
                         .IsRequired();
+
+                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }

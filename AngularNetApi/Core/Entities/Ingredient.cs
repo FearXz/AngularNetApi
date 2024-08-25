@@ -10,7 +10,6 @@ namespace AngularNetApi.Core.Entities
         public int IngredientId { get; set; }
 
         [Required]
-        [ForeignKey("StoreId")]
         public int StoreId { get; set; }
 
         [Required]

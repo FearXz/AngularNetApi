@@ -18,6 +18,6 @@ namespace AngularNetApi.Application.MediatR.Authentication.Register
 
         public string CAP { get; set; }
 
-        public string MobileNumber { get; set; }
+        public string PhoneNumber { get; set; }
     }
 }
