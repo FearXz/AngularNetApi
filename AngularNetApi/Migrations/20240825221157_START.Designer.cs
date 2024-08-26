@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AngularNetApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240825205345_SUCA")]
-    partial class SUCA
+    [Migration("20240825221157_START")]
+    partial class START
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

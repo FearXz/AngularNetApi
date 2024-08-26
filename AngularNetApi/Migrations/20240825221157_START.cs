@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace AngularNetApi.Migrations
 {
     /// <inheritdoc />
-    public partial class SUCA : Migration
+    public partial class START : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
