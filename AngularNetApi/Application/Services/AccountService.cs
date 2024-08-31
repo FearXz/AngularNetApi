@@ -142,7 +142,7 @@ namespace AngularNetApi.Application.Services
                 //    values: new { user.Id, Token }
                 //);
 
-                var confirmationLink = $"{_clientUrl}/confirmemail?userId={user.Id}&token={Token}";
+                var confirmationLink = $"{_clientUrl}/confirmemail?id={user.Id}&token={Token}";
 
                 string HtmlMessage = await _emailTemplate.RenderTemplateAsync(
                     MailT.ConfirmEmailT,
