@@ -68,8 +68,7 @@ namespace AngularNetApi.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            await _mediator.Send(confirmEmailRequest);
-            return Ok("User email confirmed");
+            return Ok(await _mediator.Send(confirmEmailRequest));
         }
 
         [HttpPost("createrole")]
