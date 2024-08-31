@@ -57,7 +57,7 @@ namespace AngularNetApi.API.Controllers
             return Ok(await _mediator.Send(request));
         }
 
-        [HttpGet("ConfirmEmail")]
+        [HttpGet("confirmemail")]
         public async Task<IActionResult> ConfirmEmail(string Id, string Token)
         {
             if (!ModelState.IsValid)

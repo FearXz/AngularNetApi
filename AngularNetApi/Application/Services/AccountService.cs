@@ -25,6 +25,9 @@ namespace AngularNetApi.Application.Services
         private readonly EmailTemplate _emailTemplate;
         private readonly LinkGenerator _link;
         private readonly IHttpContextAccessor _http;
+        private readonly IConfiguration _config;
+
+        private string _clientUrl => _config["App:ClientUrl"];
 
         public AccountService(
             IMapper mapper,
@@ -34,7 +37,8 @@ namespace AngularNetApi.Application.Services
             IEmailSender emailSender,
             EmailTemplate emailTemplate,
             LinkGenerator linkGenerator,
-            IHttpContextAccessor http
+            IHttpContextAccessor http,
+            IConfiguration config
         )
         {
             _db = db;
@@ -45,6 +49,7 @@ namespace AngularNetApi.Application.Services
             _emailTemplate = emailTemplate;
             _link = linkGenerator;
             _http = http;
+            _config = config;
         }
 
         public async Task<UserData> GetByIdAsync(string userId)
@@ -130,12 +135,14 @@ namespace AngularNetApi.Application.Services
                 // Send email to user
                 var Token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
-                var confirmationLink = _link.GetUriByAction(
-                    httpContext: _http.HttpContext,
-                    action: "ConfirmEmail",
-                    controller: "Auth",
-                    values: new { user.Id, Token }
-                );
+                //var confirmationLink = _link.GetUriByAction(
+                //    httpContext: _http.HttpContext,
+                //    action: "ConfirmEmail",
+                //    controller: "Auth",
+                //    values: new { user.Id, Token }
+                //);
+
+                var confirmationLink = $"{_clientUrl}/confirmemail?userId={user.Id}&token={Token}";
 
                 string HtmlMessage = await _emailTemplate.RenderTemplateAsync(
                     MailT.ConfirmEmailT,
