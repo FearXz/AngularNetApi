@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using System.Web;
 using AngularNetApi.API.Models;
 using AngularNetApi.Application.MediatR.Authentication.Register;
 using AngularNetApi.Core.Entities;
@@ -134,6 +135,7 @@ namespace AngularNetApi.Application.Services
 
                 // Send email to user
                 var Token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var encodedToken = HttpUtility.UrlEncode(Token);
 
                 //var confirmationLink = _link.GetUriByAction(
                 //    httpContext: _http.HttpContext,
@@ -142,7 +144,8 @@ namespace AngularNetApi.Application.Services
                 //    values: new { user.Id, Token }
                 //);
 
-                var confirmationLink = $"{_clientUrl}/confirmemail?id={user.Id}&token={Token}";
+                var confirmationLink =
+                    $"{_clientUrl}/confirmemail?id={user.Id}&token={encodedToken}";
 
                 string HtmlMessage = await _emailTemplate.RenderTemplateAsync(
                     MailT.ConfirmEmailT,
