@@ -7,6 +7,7 @@ namespace AngularNetApi.Application.MediatR.Authentication.Register
     {
         public string Email { get; set; }
         public string Password { get; set; }
+        public string ConfimPassword { get; set; }
 
         public string Name { get; set; }
 

@@ -1,7 +1,9 @@
 version: '3.4'
 
+
 services:
   angularnetapi:
+    container_name: dotnetapi
     image: ${DOCKER_REGISTRY-}angularnetapi
     build:
       context: .
@@ -23,6 +25,7 @@ services:
       - angularnetapi-network
 
   sqlserver:
+    container_name: sqlserver
     image: mcr.microsoft.com/mssql/server:latest
     environment:
       SA_PASSWORD: "AdminXz/92"
@@ -40,3 +43,4 @@ networks:
 
 volumes:
   sqlserverdata:
+    name: sqlserverdbvolume

@@ -58,6 +58,11 @@ namespace AngularNetApi.Application.Services
         {
             using (var transaction = await _db.Database.BeginTransactionAsync())
             {
+                if (userRequest.Password != userRequest.ConfimPassword)
+                {
+                    throw new BadRequestException("Passwords do not match");
+                }
+
                 // Check if user with email already exists
                 var userExists = await _userManager.FindByEmailAsync(userRequest.Email);
 
