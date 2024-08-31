@@ -58,7 +58,7 @@ namespace AngularNetApi.Application.Services
         {
             using (var transaction = await _db.Database.BeginTransactionAsync())
             {
-                if (userRequest.Password != userRequest.ConfimPassword)
+                if (userRequest.Password != userRequest.ConfirmPassword)
                 {
                     throw new BadRequestException("Passwords do not match");
                 }
