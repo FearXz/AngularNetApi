@@ -57,7 +57,7 @@ namespace AngularNetApi.API.Controllers
             return Ok(await _mediator.Send(request));
         }
 
-        [HttpGet("confirmemail")]
+        [HttpPut("confirmemail")]
         public async Task<IActionResult> ConfirmEmail(
             [FromBody] ConfirmEmailRequest confirmEmailRequest
         )
