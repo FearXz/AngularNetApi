@@ -58,7 +58,9 @@ namespace AngularNetApi.API.Controllers
         }
 
         [HttpGet("confirmemail")]
-        public async Task<IActionResult> ConfirmEmail(ConfirmEmailRequest confirmEmailRequest)
+        public async Task<IActionResult> ConfirmEmail(
+            [FromBody] ConfirmEmailRequest confirmEmailRequest
+        )
         {
             if (!ModelState.IsValid)
             {
