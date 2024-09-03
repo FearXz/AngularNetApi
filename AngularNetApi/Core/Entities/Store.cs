@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using AngularNetApi.Core.Entities.Join;
 
 namespace AngularNetApi.Core.Entities
 {
@@ -38,8 +39,6 @@ namespace AngularNetApi.Core.Entities
         public bool IsActive { get; set; } = true;
 
         // NULLABLE
-        public TimeSpan? OpeningTime { get; set; }
-        public TimeSpan? ClosingTime { get; set; }
         public string? StoreTag { get; set; }
         public string? CoverImg { get; set; }
         public string? LogoImg { get; set; }
@@ -49,5 +48,7 @@ namespace AngularNetApi.Core.Entities
 
         public virtual FiscalData FiscalData { get; set; }
         public virtual ICollection<Product> Products { get; set; }
+        public virtual ICollection<JoinStoreCategory> JoinStoreCategory { get; set; }
+        public virtual ICollection<JoinStoreWeekDay> JoinStoreOpeningDay { get; set; }
     }
 }

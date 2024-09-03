@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using AngularNetApi.Core.Entities.Join;
 using Microsoft.EntityFrameworkCore;
 
 namespace AngularNetApi.Core.Entities

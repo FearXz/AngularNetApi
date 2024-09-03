@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace AngularNetApi.Core.Entities
+namespace AngularNetApi.Core.Entities.Join
 {
     public class JoinProductIngredient
     {
