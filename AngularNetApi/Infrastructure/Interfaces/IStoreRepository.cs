@@ -9,6 +9,7 @@ namespace AngularNetApi.Infrastructure.Interfaces
         // getallstore
 
         Task<ICollection<StoreFullData>> GetAllStoreAsync();
+        Task<ICollection<StoreFullData>> GetStoreByIdAsync(int storeId);
         Task<ICollection<CategoryData>> GetAllCategories();
     }
 }

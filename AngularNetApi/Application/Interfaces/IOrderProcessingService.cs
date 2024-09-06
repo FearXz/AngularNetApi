@@ -5,7 +5,8 @@ namespace AngularNetApi.Application.Interfaces
 {
     public interface IOrderProcessingService
     {
-        public Task<ICollection<StoreFullData>> GetAllStoresAsync();
-        public Task<ICollection<CategoryData>> GetAllCategories();
+        Task<ICollection<StoreFullData>> GetAllStoresAsync();
+        Task<ICollection<StoreFullData>> GetStoreByIdAsync(int storeId);
+        Task<ICollection<CategoryData>> GetAllCategories();
     }
 }

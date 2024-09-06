@@ -14,6 +14,12 @@ namespace AngularNetApi.API.Controllers
             _orderProcessingSvc = orderProcessingSvc;
         }
 
+        [HttpGet("store/{id}")]
+        public async Task<IActionResult> GetStoreByIdAsync(int id)
+        {
+            return Ok(await _orderProcessingSvc.GetStoreByIdAsync(id));
+        }
+
         [HttpGet("stores")]
         public async Task<IActionResult> GetAllStoresAsync()
         {

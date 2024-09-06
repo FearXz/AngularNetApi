@@ -23,5 +23,10 @@ namespace AngularNetApi.Application.Services
         {
             return await _storeRepository.GetAllStoreAsync();
         }
+
+        public async Task<ICollection<StoreFullData>> GetStoreByIdAsync(int storeId)
+        {
+            return await _storeRepository.GetStoreByIdAsync(storeId);
+        }
     }
 }

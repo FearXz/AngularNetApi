@@ -36,6 +36,55 @@ namespace AngularNetApi.Infrastructure.Repositories
                     CoverImg = s.CoverImg,
                     LogoImg = s.LogoImg,
                     Description = s.Description,
+                    Products = null,
+                    WorkingDays = s
+                        .JoinStoreWeekDay.Select(jsw => new WorkingDaysFullData
+                        {
+                            StoreId = jsw.StoreId,
+                            WeekDayCode = jsw.WeekDay.WeekDayCode,
+                            WeekDayName = jsw.WeekDay.WeekDayName,
+                            Order = jsw.WeekDay.Order,
+                            WorkingHours = jsw
+                                .WorkingHour.Select(jsh => new WorkingHoursData
+                                {
+                                    ShiftOrder = jsh.ShiftOrder,
+                                    OpeningTime = jsh.OpeningTime,
+                                    ClosingTime = jsh.ClosingTime,
+                                })
+                                .ToList()
+                        })
+                        .ToList(),
+                    Categories = s
+                        .JoinStoreCategory.Select(jsc => new CategoryData
+                        {
+                            CategoryId = jsc.Category.CategoryId,
+                            CategoryName = jsc.Category.CategoryName
+                        })
+                        .ToList()
+                })
+                .ToListAsync();
+        }
+
+        public async Task<ICollection<StoreFullData>> GetStoreByIdAsync(int storeId)
+        {
+            return await _db
+                .Stores.Where(r => r.IsActive == true && r.StoreId == storeId)
+                .Select(s => new StoreFullData
+                {
+                    StoreId = s.StoreId,
+                    ApplicationUserId = s.ApplicationUserId,
+                    StoreName = s.StoreName,
+                    Address = s.Address,
+                    City = s.City,
+                    CAP = s.CAP,
+                    Latitude = s.Latitude,
+                    Longitude = s.Longitude,
+                    PhoneNumber = s.PhoneNumber,
+                    IsActive = s.IsActive,
+                    StoreTag = s.StoreTag,
+                    CoverImg = s.CoverImg,
+                    LogoImg = s.LogoImg,
+                    Description = s.Description,
                     Products = s
                         .Products.Select(p => new ProductFullData
                         {
