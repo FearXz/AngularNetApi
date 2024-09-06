@@ -19,5 +19,11 @@ namespace AngularNetApi.API.Controllers
         {
             return Ok(await _orderProcessingSvc.GetAllStoresAsync());
         }
+
+        [HttpGet("categories")]
+        public async Task<IActionResult> GetAllCategories()
+        {
+            return Ok(await _orderProcessingSvc.GetAllCategories());
+        }
     }
 }

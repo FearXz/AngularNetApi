@@ -14,6 +14,11 @@ namespace AngularNetApi.Application.Services
             _storeRepository = storeRepository;
         }
 
+        public Task<ICollection<CategoryData>> GetAllCategories()
+        {
+            return _storeRepository.GetAllCategories();
+        }
+
         public async Task<ICollection<StoreFullData>> GetAllStoresAsync()
         {
             return await _storeRepository.GetAllStoreAsync();

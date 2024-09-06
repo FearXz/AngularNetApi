@@ -84,5 +84,16 @@ namespace AngularNetApi.Infrastructure.Repositories
                 })
                 .ToListAsync();
         }
+
+        public async Task<ICollection<CategoryData>> GetAllCategories()
+        {
+            return await _db
+                .Categories.Select(c => new CategoryData
+                {
+                    CategoryId = c.CategoryId,
+                    CategoryName = c.CategoryName
+                })
+                .ToListAsync();
+        }
     }
 }
