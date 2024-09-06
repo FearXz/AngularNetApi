@@ -20,5 +20,6 @@
 
         public ICollection<ProductFullData> Products { get; set; }
         public ICollection<WorkingDaysFullData> WorkingDays { get; set; }
+        public ICollection<CategoryData> Categories { get; set; }
     }
 }

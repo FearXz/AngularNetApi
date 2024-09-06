@@ -73,6 +73,13 @@ namespace AngularNetApi.Infrastructure.Repositories
                                 })
                                 .ToList()
                         })
+                        .ToList(),
+                    Categories = s
+                        .JoinStoreCategory.Select(jsc => new CategoryData
+                        {
+                            CategoryId = jsc.Category.CategoryId,
+                            CategoryName = jsc.Category.CategoryName
+                        })
                         .ToList()
                 })
                 .ToListAsync();
