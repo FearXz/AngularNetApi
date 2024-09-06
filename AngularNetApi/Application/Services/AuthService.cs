@@ -52,7 +52,7 @@ namespace AngularNetApi.Application.Services
             );
             if (result.IsNotAllowed)
             {
-                throw new BadRequestException("User is not allowed to sign in.");
+                throw new ForbiddenException("User is not allowed to sign in.");
             }
             // Throw exception if sign in fails
             if (!result.Succeeded)
