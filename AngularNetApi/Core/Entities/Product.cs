@@ -14,6 +14,10 @@ namespace AngularNetApi.Core.Entities
         [ForeignKey("StoreId")]
         public int StoreId { get; set; }
 
+        //[Required]
+        [ForeignKey("ProductTypeId")]
+        public int ProductTypeId { get; set; }
+
         [Required]
         public string ProductName { get; set; }
 
@@ -29,5 +33,6 @@ namespace AngularNetApi.Core.Entities
 
         // Navigation Property
         public virtual ICollection<JoinProductIngredient> JoinProductIngredient { get; set; }
+        public virtual ProductType ProductType { get; set; }
     }
 }

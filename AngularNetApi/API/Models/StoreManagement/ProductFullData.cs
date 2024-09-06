@@ -11,5 +11,6 @@
         public bool IsActive { get; set; } = true;
 
         public ICollection<IngredientData> Ingredients { get; set; }
+        public ProductTypeData ProductType { get; set; }
     }
 }

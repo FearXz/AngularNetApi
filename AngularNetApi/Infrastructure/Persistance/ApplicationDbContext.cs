@@ -26,5 +26,6 @@ namespace AngularNetApi.Infrastructure.Persistance
         public DbSet<WeekDay> WeekDays { get; set; }
         public DbSet<JoinStoreWeekDay> JoinStoreWeekDays { get; set; }
         public DbSet<WorkingHour> WorkingHours { get; set; }
+        public DbSet<ProductType> ProductType { get; set; }
     }
 }

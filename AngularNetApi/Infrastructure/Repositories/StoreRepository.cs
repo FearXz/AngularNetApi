@@ -95,6 +95,11 @@ namespace AngularNetApi.Infrastructure.Repositories
                             IsActive = p.IsActive,
                             Description = p.Description,
                             ProductImg = p.ProductImg,
+                            ProductType = new ProductTypeData
+                            {
+                                ProductTypeId = p.ProductType.ProductTypeId,
+                                ProductTypeName = p.ProductType.ProductTypeName
+                            },
                             Ingredients = p
                                 .JoinProductIngredient.Select(jpi => new IngredientData
                                 {
