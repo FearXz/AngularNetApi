@@ -1,4 +1,4 @@
-﻿namespace AngularNetApi.Application.MediatR.Authentication.RefreshToken
+﻿namespace AngularNetApi.API.Models.Authentication
 {
     public class RefreshTokenResponse
     {

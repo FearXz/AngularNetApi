@@ -1,6 +1,8 @@
-﻿using AngularNetApi.Application.MediatR.Authentication.ConfirmEmail;
-using AngularNetApi.Application.MediatR.Authentication.Login;
-using AngularNetApi.Application.MediatR.Authentication.RefreshToken;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using AngularNetApi.API.Models.Authentication;
+using AngularNetApi.Application.MediatR.Authentication.ConfirmEmail;
 using AngularNetApi.Core.Entities;
 using AngularNetApi.Core.Exceptions;
 using AngularNetApi.Infrastructure.Persistance;
@@ -8,9 +10,6 @@ using AngularNetApi.Services.Auth;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace AngularNetApi.Application.Services
 {

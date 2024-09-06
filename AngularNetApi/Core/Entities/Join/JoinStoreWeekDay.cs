@@ -6,7 +6,7 @@ namespace AngularNetApi.Core.Entities.Join
     public class JoinStoreWeekDay
     {
         [Key]
-        public int JoinStoreOpeningDayId { get; set; }
+        public int JoinStoreWeekDayId { get; set; }
 
         [Required]
         [ForeignKey("Store")]
@@ -19,5 +19,6 @@ namespace AngularNetApi.Core.Entities.Join
         // NAVIGATION PROPERTY
 
         public virtual WeekDay WeekDay { get; set; }
+        public virtual ICollection<WorkingHour> WorkingHour { get; set; }
     }
 }

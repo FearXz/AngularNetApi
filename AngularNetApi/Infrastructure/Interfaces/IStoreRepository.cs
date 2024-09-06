@@ -1,12 +1,13 @@
 ﻿using AngularNetApi.API.Models;
+using AngularNetApi.API.Models.StoreManagement;
 using AngularNetApi.Core.Entities;
 
 namespace AngularNetApi.Infrastructure.Interfaces
 {
-    public interface IOrderOpsRepository
+    public interface IStoreRepository
     {
         // getallstore
 
-        Task<ICollection<Store>> GetAllStore();
+        Task<ICollection<StoreFullData>> GetAllStoreAsync();
     }
 }

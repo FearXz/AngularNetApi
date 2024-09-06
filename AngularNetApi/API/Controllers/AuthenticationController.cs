@@ -1,7 +1,7 @@
-﻿using AngularNetApi.Application.MediatR.Authentication.ConfirmEmail;
-using AngularNetApi.Application.MediatR.Authentication.Login;
-using AngularNetApi.Application.MediatR.Authentication.RefreshToken;
-using AngularNetApi.Application.MediatR.Authentication.Register;
+﻿using AngularNetApi.API.Models.AccountManagement;
+using AngularNetApi.API.Models.Authentication;
+using AngularNetApi.Services.Auth;
+using AngularNetApi.Services.User;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,15 +10,21 @@ namespace AngularNetApi.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController : ControllerBase
+    public class AuthenticationController : ControllerBase
     {
-        private readonly IMediator _mediator;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IAuthService _authSvc;
+        private readonly IAccountService _accountSvc;
 
-        public AuthController(IMediator mediator, RoleManager<IdentityRole> roleManager)
+        public AuthenticationController(
+            RoleManager<IdentityRole> roleManager,
+            IAuthService authService,
+            IAccountService accountService
+        )
         {
-            _mediator = mediator;
             _roleManager = roleManager;
+            _authSvc = authService;
+            _accountSvc = accountService;
         }
 
         [HttpPost("login")]
@@ -30,7 +36,7 @@ namespace AngularNetApi.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            return Ok(await _mediator.Send(request));
+            return Ok(await _authSvc.Login(request));
         }
 
         [HttpPost("register")]
@@ -42,7 +48,7 @@ namespace AngularNetApi.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            return Ok(await _mediator.Send(request));
+            return Ok(await _accountSvc.CreateAsync(request));
         }
 
         [HttpPost("refreshtoken")]
@@ -54,13 +60,11 @@ namespace AngularNetApi.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            return Ok(await _mediator.Send(request));
+            return Ok(await _authSvc.RefreshToken(request));
         }
 
         [HttpPut("confirmemail")]
-        public async Task<IActionResult> ConfirmEmail(
-            [FromBody] ConfirmEmailRequest confirmEmailRequest
-        )
+        public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -68,7 +72,7 @@ namespace AngularNetApi.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            return Ok(await _mediator.Send(confirmEmailRequest));
+            return Ok(await _authSvc.ConfirmEmailAsync(request));
         }
 
         [HttpPost("createrole")]

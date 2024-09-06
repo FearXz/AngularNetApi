@@ -1,9 +1,9 @@
 ﻿using AngularNetApi.API.Models;
 using MediatR;
 
-namespace AngularNetApi.Application.MediatR.Authentication.Register
+namespace AngularNetApi.API.Models.AccountManagement
 {
-    public class CreateUserRequest : IRequest<UserData>
+    public class CreateUserRequest
     {
         public string Email { get; set; }
         public string Password { get; set; }

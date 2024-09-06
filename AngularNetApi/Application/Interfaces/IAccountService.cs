@@ -1,5 +1,4 @@
-﻿using AngularNetApi.API.Models;
-using AngularNetApi.Application.MediatR.Authentication.Register;
+﻿using AngularNetApi.API.Models.AccountManagement;
 using AngularNetApi.Core.Entities;
 
 namespace AngularNetApi.Services.User

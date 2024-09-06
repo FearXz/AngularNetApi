@@ -1,8 +1,8 @@
 ﻿using MediatR;
 
-namespace AngularNetApi.Application.MediatR.Authentication.Login
+namespace AngularNetApi.API.Models.Authentication
 {
-    public class LoginRequest : IRequest<LoginResponse>
+    public class LoginRequest
     {
         public string Email { get; set; }
         public string Password { get; set; }

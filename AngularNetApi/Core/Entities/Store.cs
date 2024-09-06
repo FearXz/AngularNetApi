@@ -49,6 +49,6 @@ namespace AngularNetApi.Core.Entities
         public virtual FiscalData FiscalData { get; set; }
         public virtual ICollection<Product> Products { get; set; }
         public virtual ICollection<JoinStoreCategory> JoinStoreCategory { get; set; }
-        public virtual ICollection<JoinStoreWeekDay> JoinStoreOpeningDay { get; set; }
+        public virtual ICollection<JoinStoreWeekDay> JoinStoreWeekDay { get; set; }
     }
 }

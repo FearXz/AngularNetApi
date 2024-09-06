@@ -8,14 +8,12 @@ namespace AngularNetApi.Core.Entities
         public int WeekDayId { get; set; }
 
         [Required]
-        public int WeekDayNumber { get; set; }
+        public int WeekDayCode { get; set; }
+
+        [Required]
+        public int Order { get; set; }
 
         [Required]
         public string WeekDayName { get; set; }
-
-        //public TimeSpan? OpeningTime { get; set; }
-        //public TimeSpan? ClosingTime { get; set; }
-        //public TimeSpan? OpeningTime2 { get; set; }
-        //public TimeSpan? ClosingTime2 { get; set; }
     }
 }

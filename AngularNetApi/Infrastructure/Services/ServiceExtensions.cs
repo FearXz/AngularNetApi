@@ -1,4 +1,5 @@
-﻿using AngularNetApi.Application.Mapping;
+﻿using AngularNetApi.Application.Interfaces;
+using AngularNetApi.Application.Mapping;
 using AngularNetApi.Application.Services;
 using AngularNetApi.Infrastructure.Interfaces;
 using AngularNetApi.Infrastructure.Repositories;
@@ -25,8 +26,11 @@ namespace AngularNetApi.Infrastructure.Services
             services.AddSingleton<EmailTemplate>();
 
             services.AddScoped<IAuthService, AuthService>();
-            services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IOrderProcessingService, OrderProcessingService>();
+
+            services.AddScoped<IAccountRepository, AccountRepository>();
+            services.AddScoped<IStoreRepository, StoreRepository>();
 
             return services;
         }

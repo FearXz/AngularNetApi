@@ -1,6 +1,5 @@
-﻿using AngularNetApi.Application.MediatR.Authentication.ConfirmEmail;
-using AngularNetApi.Application.MediatR.Authentication.Login;
-using AngularNetApi.Application.MediatR.Authentication.RefreshToken;
+﻿using AngularNetApi.API.Models.Authentication;
+using AngularNetApi.Application.MediatR.Authentication.ConfirmEmail;
 using Microsoft.AspNetCore.Identity;
 
 namespace AngularNetApi.Services.Auth

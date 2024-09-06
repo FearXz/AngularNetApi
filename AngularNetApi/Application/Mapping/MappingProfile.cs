@@ -1,4 +1,4 @@
-﻿using AngularNetApi.Application.MediatR.Authentication.Register;
+﻿using AngularNetApi.API.Models.AccountManagement;
 using AngularNetApi.Core.Entities;
 using AutoMapper;
 

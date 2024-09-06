@@ -1,4 +1,4 @@
-﻿namespace AngularNetApi.API.Models
+﻿namespace AngularNetApi.API.Models.AccountManagement
 {
     public class UserData
     {

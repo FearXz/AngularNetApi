@@ -4,6 +4,7 @@ using AngularNetApi.Infrastructure.Persistance;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AngularNetApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240903172958_addWorkingHour")]
+    partial class addWorkingHour
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -211,11 +214,11 @@ namespace AngularNetApi.Migrations
 
             modelBuilder.Entity("AngularNetApi.Core.Entities.Join.JoinStoreWeekDay", b =>
                 {
-                    b.Property<int>("JoinStoreWeekDayId")
+                    b.Property<int>("JoinStoreOpeningDayId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("JoinStoreWeekDayId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("JoinStoreOpeningDayId"));
 
                     b.Property<int>("StoreId")
                         .HasColumnType("int");
@@ -223,7 +226,7 @@ namespace AngularNetApi.Migrations
                     b.Property<int>("WeekDayId")
                         .HasColumnType("int");
 
-                    b.HasKey("JoinStoreWeekDayId");
+                    b.HasKey("JoinStoreOpeningDayId");
 
                     b.HasIndex("StoreId");
 
@@ -412,15 +415,12 @@ namespace AngularNetApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WeekDayId"));
 
-                    b.Property<int>("Order")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WeekDayCode")
-                        .HasColumnType("int");
-
                     b.Property<string>("WeekDayName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("WeekDayNumber")
+                        .HasColumnType("int");
 
                     b.HasKey("WeekDayId");
 
@@ -616,7 +616,7 @@ namespace AngularNetApi.Migrations
             modelBuilder.Entity("AngularNetApi.Core.Entities.Join.JoinStoreWeekDay", b =>
                 {
                     b.HasOne("AngularNetApi.Core.Entities.Store", null)
-                        .WithMany("JoinStoreWeekDay")
+                        .WithMany("JoinStoreOpeningDay")
                         .HasForeignKey("StoreId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -762,7 +762,7 @@ namespace AngularNetApi.Migrations
 
                     b.Navigation("JoinStoreCategory");
 
-                    b.Navigation("JoinStoreWeekDay");
+                    b.Navigation("JoinStoreOpeningDay");
 
                     b.Navigation("Products");
                 });

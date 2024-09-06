@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Web;
-using AngularNetApi.API.Models;
-using AngularNetApi.Application.MediatR.Authentication.Register;
+using AngularNetApi.API.Models.AccountManagement;
 using AngularNetApi.Core.Entities;
 using AngularNetApi.Core.Exceptions;
 using AngularNetApi.Core.ValueObjects;

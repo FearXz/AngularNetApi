@@ -44,12 +44,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Application\MediatR\AccountManagement\" />
-    <Folder Include="Application\MediatR\StoreManagement\" />
-    <Folder Include="Application\MediatR\AuditLog\" />
-    <Folder Include="Application\MediatR\OrderProcessing\" />
-    <Folder Include="Application\MediatR\Notification\" />
-    <Folder Include="Application\MediatR\OrderOps\" />
     <Folder Include="Test\" />
   </ItemGroup>
 

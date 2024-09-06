@@ -4,6 +4,7 @@ using AngularNetApi.Infrastructure.Persistance;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AngularNetApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240906085225_changenameweekday")]
+    partial class changenameweekday
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -412,15 +415,12 @@ namespace AngularNetApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WeekDayId"));
 
-                    b.Property<int>("Order")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WeekDayCode")
-                        .HasColumnType("int");
-
                     b.Property<string>("WeekDayName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("WeekDayNumber")
+                        .HasColumnType("int");
 
                     b.HasKey("WeekDayId");
 

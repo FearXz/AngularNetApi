@@ -1,4 +1,4 @@
-﻿using AngularNetApi.API.Models;
+﻿using AngularNetApi.API.Models.AccountManagement;
 using AngularNetApi.Core.Entities;
 using AngularNetApi.Core.Exceptions;
 using AngularNetApi.Infrastructure.Interfaces;
