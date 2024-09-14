@@ -27,6 +27,12 @@ namespace AngularNetApi.API.Controllers
         [HttpPost("createstore")]
         public async Task<IActionResult> CreateStore([FromBody] CreateStoreRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError(string.Empty, "Invalid CreateStoreRequest.");
+                return BadRequest(ModelState);
+            }
+
             var userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             return Ok(await _storeSvc.CreateStoreAsync(request, userId));
         }
@@ -34,6 +40,12 @@ namespace AngularNetApi.API.Controllers
         [HttpPut("updatestore")]
         public async Task<IActionResult> UpdateStore([FromBody] UpdateStoreRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError(string.Empty, "Invalid UpdateStoreRequest.");
+                return BadRequest(ModelState);
+            }
+
             var userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             return Ok(await _storeSvc.UpdateStoreAsync(request, userId));
         }
