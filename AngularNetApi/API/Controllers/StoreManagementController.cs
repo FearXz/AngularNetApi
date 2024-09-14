@@ -8,7 +8,6 @@ namespace AngularNetApi.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class StoreManagementController : ControllerBase
     {
         private readonly IStoreManagementService _storeSvc;
@@ -24,6 +23,7 @@ namespace AngularNetApi.API.Controllers
             return Ok(await _storeSvc.GetStoreByIdAsync(id));
         }
 
+        [Authorize]
         [HttpPost("createstore")]
         public async Task<IActionResult> CreateStore([FromBody] CreateStoreRequest request)
         {

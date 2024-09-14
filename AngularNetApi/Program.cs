@@ -4,6 +4,7 @@ using AngularNetApi.API.Middlewares;
 using AngularNetApi.Core.Entities;
 using AngularNetApi.Infrastructure.Persistance;
 using AngularNetApi.Infrastructure.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -31,8 +32,11 @@ builder.Services.AddHttpContextAccessor();
 builder
     .Services.AddAuthentication(options =>
     {
-        options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
-        options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
+        //options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
+        //options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
+
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     })
     .AddCookie(IdentityConstants.ApplicationScheme)
     .AddJwtBearer(options =>
