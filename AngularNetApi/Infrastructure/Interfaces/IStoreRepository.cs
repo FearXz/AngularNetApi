@@ -6,10 +6,18 @@ namespace AngularNetApi.Infrastructure.Interfaces
 {
     public interface IStoreRepository
     {
-        // getallstore
+        #region store methods
 
         Task<ICollection<StoreFullData>> GetAllStoreAsync();
-        Task<ICollection<StoreFullData>> GetStoreByIdAsync(int storeId);
+        Task<StoreFullData> GetStoreByIdAsync(int storeId);
+        Task<StoreFullData> CreateStoreAsync(Store store);
+        Task<StoreFullData> UpdateStoreAsync(Store store);
+
+        #endregion
+
+        #region category methods
         Task<ICollection<CategoryData>> GetAllCategories();
+
+        #endregion
     }
 }

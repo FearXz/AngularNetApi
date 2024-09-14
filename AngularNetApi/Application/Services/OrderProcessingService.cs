@@ -5,28 +5,5 @@ using AngularNetApi.Infrastructure.Interfaces;
 
 namespace AngularNetApi.Application.Services
 {
-    public class OrderProcessingService : IOrderProcessingService
-    {
-        private readonly IStoreRepository _storeRepository;
-
-        public OrderProcessingService(IStoreRepository storeRepository)
-        {
-            _storeRepository = storeRepository;
-        }
-
-        public Task<ICollection<CategoryData>> GetAllCategories()
-        {
-            return _storeRepository.GetAllCategories();
-        }
-
-        public async Task<ICollection<StoreFullData>> GetAllStoresAsync()
-        {
-            return await _storeRepository.GetAllStoreAsync();
-        }
-
-        public async Task<ICollection<StoreFullData>> GetStoreByIdAsync(int storeId)
-        {
-            return await _storeRepository.GetStoreByIdAsync(storeId);
-        }
-    }
+    public class OrderProcessingService : IOrderProcessingService { }
 }

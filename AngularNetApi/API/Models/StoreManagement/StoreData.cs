@@ -1,6 +1,6 @@
 ﻿namespace AngularNetApi.API.Models.StoreManagement
 {
-    public class StoreFullData
+    public class StoreData
     {
         public int StoreId { get; set; }
         public string ApplicationUserId { get; set; }
@@ -16,9 +16,5 @@
         public string? CoverImg { get; set; }
         public string? LogoImg { get; set; }
         public string? Description { get; set; }
-
-        public ICollection<ProductFullData> Products { get; set; }
-        public ICollection<WorkingDaysFullData> WorkingDays { get; set; }
-        public ICollection<CategoryData> Categories { get; set; }
     }
 }

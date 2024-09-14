@@ -1,6 +1,5 @@
 ﻿using AngularNetApi.API.Models.StoreManagement;
 using AngularNetApi.Core.Entities;
-using AngularNetApi.Core.Entities.Join;
 using AngularNetApi.Infrastructure.Interfaces;
 using AngularNetApi.Infrastructure.Persistance;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +15,7 @@ namespace AngularNetApi.Infrastructure.Repositories
             _db = db;
         }
 
+        #region store methods
         public async Task<ICollection<StoreFullData>> GetAllStoreAsync()
         {
             return await _db
@@ -65,7 +65,7 @@ namespace AngularNetApi.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<ICollection<StoreFullData>> GetStoreByIdAsync(int storeId)
+        public async Task<StoreFullData?> GetStoreByIdAsync(int storeId)
         {
             return await _db
                 .Stores.Where(r => r.IsActive == true && r.StoreId == storeId)
@@ -136,8 +136,25 @@ namespace AngularNetApi.Infrastructure.Repositories
                         })
                         .ToList()
                 })
-                .ToListAsync();
+                .FirstOrDefaultAsync();
         }
+
+        public async Task<StoreFullData> CreateStoreAsync(Store store)
+        {
+            await _db.Stores.AddAsync(store);
+            await _db.SaveChangesAsync();
+
+            return await GetStoreByIdAsync(store.StoreId);
+        }
+
+        public async Task<StoreFullData> UpdateStoreAsync(Store store)
+        {
+            _db.Stores.Update(store);
+            await _db.SaveChangesAsync();
+
+            return await GetStoreByIdAsync(store.StoreId);
+        }
+        #endregion
 
         public async Task<ICollection<CategoryData>> GetAllCategories()
         {

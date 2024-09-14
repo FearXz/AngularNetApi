@@ -27,6 +27,7 @@ namespace AngularNetApi.Infrastructure.Services
 
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IStoreManagementService, StoreManagementService>();
             services.AddScoped<IOrderProcessingService, OrderProcessingService>();
 
             services.AddScoped<IAccountRepository, AccountRepository>();
